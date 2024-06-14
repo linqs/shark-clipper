@@ -1,0 +1,90 @@
+.page {
+    width: 100%;
+    overflow-x: hidden;
+
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.page-section {
+    width: 90%;
+    min-height: 10px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.page-section {
+    width: 100%;
+    min-height: 10px;
+    padding: 20px;
+
+    display: flex;
+    justify-content: center;
+}
+
+.video-container {
+    position: relative;
+}
+
+.video-container video {
+    width: 640px;
+    height: 360px;
+}
+
+.video-container .selection {
+    position: absolute;
+    top: 0;
+    left: 0;
+    
+    width: 200px;
+    height: 200px;
+    border-radius: 2px;
+    padding: 0;
+    margin: 0;
+    background-color: #ffffff88;
+    border: solid 2px black;
+
+    touch-action: none;
+    box-sizing: border-box;
+}
+
+.control-area {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px
+}
+
+.screenshot-area {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    gap: 20px;
+}
+
+.screenshot-area .screenshot {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: 100%;
+    justify-content: center;
+    align-content: center;
+}
+
+.screenshot-area .screenshot .image-area {
+    width: 45%;
+}
+
+.screenshot-area .screenshot .image-area img {
+    max-width: 100%;
+}
+
+.screenshot-area .screenshot .metadata-area {
+    width: 45%;
+    padding-left: 50px;
+}
