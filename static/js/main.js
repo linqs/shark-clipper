@@ -2,6 +2,8 @@
 
 window.shark = window.shark || {};
 
+window.shark.screenshots = window.shark.screenshots || {};
+
 function toggleSelection() {
     // TEST - toggle
 
@@ -33,8 +35,7 @@ function captureFrame() {
 }
 
 function addScreenshot(screenshot) {
-    // TEST
-    let name = 'TEST';
+    window.shark.screenshots[screenshot.name] = screenshot;
 
     let html = `
         <div class='screenshot'>
@@ -44,17 +45,28 @@ function addScreenshot(screenshot) {
             <div class='metadata-area'>
                 <div>
                     <label for='name'>Name</label>
-                    <input type='text' name='name' value='${name}' />
+                    <input type='text' name='name'
+                            data-screenshot='${screenshot.id}'
+                            onchange='editScreenshot(this, "${screenshot.id}", "name")'
+                            value='${screenshot.name}' />
                 </div>
                 <div>
                     <label for='time'>Time</label>
-                    <input type='number' name='time' readonly='true' disabled value='${screenshot.time}' />
+                    <input type='number' name='time' readonly='true' disabled
+                            data-screenshot='${screenshot.id}'
+                            onchange='editScreenshot(this, "${screenshot.id}", "time")'
+                            value='${screenshot.time}' />
                 </div>
             </div>
         </div>
     `;
 
     document.querySelector('.screenshot-area').insertAdjacentHTML('beforeend', html);
+}
+
+// Edit the global screenshot record.
+function editScreenshot(element, id, field) {
+    window.shark.screenshots[id][field] = element.value;
 }
 
 // Use percentage values since we will have to compute sizes based off of the video's intrinsic (not apparent) size.
@@ -66,7 +78,12 @@ function takeVideoScreenshot(query, xPercent, yPercent, widthPercent, heightPerc
     let width = widthPercent * video.videoWidth;
     let height = heightPercent * video.videoHeight;
 
+    let id = randomHex();
+
     return {
+        'id': id,
+        // TODO(eriq): Base name off of video.
+        'name': id,
         'width': width,
         'height': height,
         'time': video.currentTime,

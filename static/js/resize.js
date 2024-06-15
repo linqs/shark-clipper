@@ -7,9 +7,6 @@ window.shark = window.shark || {};
 const MIN_DIM = 50;
 
 function makeSelectionBox(containerQuery) {
-    // TEST
-    console.log("TEST - Make Selection");
-
     let container = document.querySelector(containerQuery);
 
     let selection = document.createElement('div');
