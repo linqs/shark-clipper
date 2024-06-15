@@ -1,10 +1,8 @@
-import argparse
 import http
 import http.server
 import json
 import os
 import re
-import sys
 import traceback
 
 import handlers
@@ -54,8 +52,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if (length <= 0):
             return {}
 
-        temp_id = util.get_uuid()
-        temp_dir = os.path.join(Handler._temp_dir, temp_id)
+        video_id = util.get_uuid()
+        temp_dir = os.path.join(Handler._temp_dir, 'raw', video_id)
         os.makedirs(temp_dir, exist_ok = True)
 
         temp_path = os.path.join(temp_dir, filename)
@@ -63,9 +61,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
             file.write(self.rfile.read(length))
 
         return {
-            'temp_id': temp_id,
+            'video_id': video_id,
             'filename': filename,
-            'uploaded_relpath': '/'.join([temp_id, filename]),
+            'uploaded_relpath': '/'.join([video_id, filename]),
             'uploaded_path': temp_path,
         }
 
@@ -127,25 +125,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
             return None, http.HTTPStatus.INTERNAL_SERVER_ERROR, None
 
-def run(args):
-    print("Serving on 127.0.0.1:%d ." % (args.port))
+def run(port = DEFAULT_PORT, **kwargs):
+    print("Serving on 127.0.0.1:%d ." % (port))
 
-    server = http.server.HTTPServer(('', args.port), Handler)
+    server = http.server.HTTPServer(('', port), Handler)
     server.serve_forever()
-
-    return 0
-
-def main():
-    return run(_get_parser().parse_args())
-
-def _get_parser():
-    parser = argparse.ArgumentParser(description = 'Run a web GUI for clipping fin images from shark videos.')
-
-    parser.add_argument('--port', dest = 'port',
-        action = 'store', type = int, default = DEFAULT_PORT,
-        help = 'Port to launch the web GUI on (default: %(default)s).')
-
-    return parser
-
-if __name__ == '__main__':
-    sys.exit(main())

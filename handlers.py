@@ -2,6 +2,8 @@ import http
 import mimetypes
 import os
 
+import ffmpeg
+
 THIS_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 STATIC_DIR = os.path.join(THIS_DIR, 'static')
 
@@ -40,20 +42,22 @@ def temp(handler, path, temp_dir = None, **kwargs):
 
 # Prep a video for work, and get metadata about it.
 def video(handler, path,
-        temp_id = None, uploaded_path = None, uploaded_relpath = None, **kwargs):
-    # TODO - encode
+        video_id = None,
+        uploaded_path = None,
+        uploaded_relpath = None,
+        temp_dir = None,
+        filename = None,
+        **kwargs):
+    new_path = os.path.join(temp_dir, 'webencode', video_id, filename)
+    os.makedirs(os.path.dirname(new_path), exist_ok = True)
 
-    # TEST
-    print("TEST - video")
+    new_path = ffmpeg.transcode_for_web(uploaded_path, new_path, video_id)
 
     response = {
-        'id': temp_id,
-        'path': '/temp/' + uploaded_relpath,
+        'video_id': video_id,
+        'path': '/'.join(['/temp', 'webencode', video_id, os.path.basename(new_path)]),
         'type': 'video/mp4',
     }
-
-    # TEST
-    print(response)
 
     return response, None, None
 
