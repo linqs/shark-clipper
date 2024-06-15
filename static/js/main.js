@@ -4,6 +4,57 @@ window.shark = window.shark || {};
 
 window.shark.screenshots = window.shark.screenshots || {};
 
+function uploadVideo() {
+    // TEST
+    console.log("TEST - Upload")
+
+    let file = document.querySelector('input.file-selector').files[0];
+
+    let promise = fetch('/video', {
+        method: 'POST',
+        body: file,
+        headers: {
+            'shark-clipper-upload': true,
+            'shark-clipper-filename': file.name,
+            'shark-clipper-type': file.type,
+        },
+    });
+
+    // TEST - Loading
+
+    promise
+        .then(function(response) {
+            response.json()
+                .then(function(body) {
+                    initVideo(body);
+                })
+                .catch(function(response) {
+                    console.error("Failed to decode video response (json) body.");
+                    console.error(response);
+                });
+        })
+        .catch(function(response) {
+            console.error("Failed to upload video.");
+            console.error(response);
+        })
+        .finally(function() {
+            // TEST
+            console.log("TEST - finally");
+        });
+}
+
+function initVideo(info) {
+    let videoContainer = document.querySelector('.work-screen .video-container');
+    videoContainer.innerHTML = `
+        <video controls>
+            <source src='${info.path}' type='${info.type}' />
+        </video>
+    `;
+
+    document.querySelector('.file-upload-screen').style.display = 'none';
+    document.querySelector('.work-screen').style.display = 'initial';
+}
+
 function toggleSelection() {
     // TEST - toggle
 

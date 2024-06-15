@@ -10,20 +10,29 @@
 }
 
 .page-section {
-    width: 90%;
-    min-height: 10px;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-}
-
-.page-section {
     width: 100%;
     min-height: 10px;
     padding: 20px;
 
     display: flex;
     justify-content: center;
+}
+
+.file-upload-screen {
+    display: initial;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.file-upload-screen input {
+    text-align: center;
+}
+
+.work-screen {
+    display: none;
 }
 
 .video-container {

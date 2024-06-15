@@ -1,36 +1,43 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset='utf-8'/>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
 
         <title>Shark Clipper</title>
 
-        <link rel="stylesheet" href="/static/css/vendor/normalize.css">
-        <link rel="stylesheet" href="/static/css/style.css">
+        <link rel='stylesheet' href='/static/css/vendor/normalize.css'>
+        <link rel='stylesheet' href='/static/css/style.css'>
 
-        <script type="application/javascript" src="/static/js/vendor/interact.min.js"></script>
-        <script type="application/javascript" src="/static/js/resize.js"></script>
-        <script type="application/javascript" src="/static/js/util.js"></script>
+        <script type='application/javascript' src='/static/js/vendor/interact.min.js'></script>
+        <script type='application/javascript' src='/static/js/resize.js'></script>
+        <script type='application/javascript' src='/static/js/util.js'></script>
 
-        <script type="application/javascript" src="/static/js/main.js"></script>
+        <script type='application/javascript' src='/static/js/main.js'></script>
     </head>
     <body>
         <div class='page'>
-            <div class='page-section video-area'>
-                <div class='video-container'>
-                    <video controls>
-                        <source src='/static/test-videos/15532/opt.mp4' type='video/mp4' />
-                    </video>
+            <div class='header'>
+                <h1>Shark Clipper</h1>
+            </div>
+            <div class='file-upload-screen'>
+                <label for='upload-file'>Choose a Video File</label>
+                <br />
+                <input type='file' class='file-selector' name='upload-file' onchange='uploadVideo()' />
+            </div>
+            <div class='work-screen'>
+                <div class='page-section video-area'>
+                    <div class='video-container'>
+                    </div>
                 </div>
-            </div>
 
-            <div class='page-section control-area'>
-                <button onclick='toggleSelection()'>Toggle Selection Box</button>
-                <button onclick='captureFrame()'>Take Screenshot</button>
-            </div>
+                <div class='page-section control-area'>
+                    <button onclick='toggleSelection()'>Toggle Selection Box</button>
+                    <button onclick='captureFrame()'>Take Screenshot</button>
+                </div>
 
-            <div class='page-section screenshot-area'>
+                <div class='page-section screenshot-area'>
+                </div>
             </div>
         </div>
     </body>

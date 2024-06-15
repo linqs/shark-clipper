@@ -15,5 +15,6 @@ __pycache__/
 /*_test.*
 
 /.secrets
+/test/
 
 /static/test-videos
