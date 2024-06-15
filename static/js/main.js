@@ -4,10 +4,25 @@ window.shark = window.shark || {};
 
 window.shark.screenshots = window.shark.screenshots || {};
 
-function uploadVideo() {
-    // TEST
-    console.log("TEST - Upload")
+function goToLoadingScreen() {
+    document.querySelector('.file-upload-screen').style.display = 'none';
+    document.querySelector('.loading-screen').style.display = 'initial';
+    document.querySelector('.work-screen').style.display = 'none';
+}
 
+function goToUploadScreen() {
+    document.querySelector('.file-upload-screen').style.display = 'initial';
+    document.querySelector('.loading-screen').style.display = 'none';
+    document.querySelector('.work-screen').style.display = 'none';
+}
+
+function goToWorkScreen() {
+    document.querySelector('.file-upload-screen').style.display = 'none';
+    document.querySelector('.loading-screen').style.display = 'none';
+    document.querySelector('.work-screen').style.display = 'initial';
+}
+
+function uploadVideo() {
     let file = document.querySelector('input.file-selector').files[0];
 
     let promise = fetch('/video', {
@@ -20,26 +35,25 @@ function uploadVideo() {
         },
     });
 
-    // TEST - Loading
+    goToLoadingScreen();
 
     promise
         .then(function(response) {
             response.json()
                 .then(function(body) {
                     initVideo(body);
+                    goToWorkScreen();
                 })
                 .catch(function(response) {
                     console.error("Failed to decode video response (json) body.");
                     console.error(response);
+                    goToUploadScreen();
                 });
         })
         .catch(function(response) {
             console.error("Failed to upload video.");
             console.error(response);
-        })
-        .finally(function() {
-            // TEST
-            console.log("TEST - finally");
+            goToUploadScreen();
         });
 }
 
@@ -50,9 +64,6 @@ function initVideo(info) {
             <source src='${info.path}' type='${info.type}' />
         </video>
     `;
-
-    document.querySelector('.file-upload-screen').style.display = 'none';
-    document.querySelector('.work-screen').style.display = 'initial';
 }
 
 function toggleSelection() {
@@ -154,8 +165,7 @@ function takeScreenshot(source, x, y, width, height, format = 'image/jpeg') {
 }
 
 function main() {
-    // TEST
-    console.log("TEST - main");
+    goToUploadScreen();
 }
 
 document.addEventListener("DOMContentLoaded", main);

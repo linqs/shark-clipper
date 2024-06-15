@@ -20,23 +20,36 @@
             <div class='header'>
                 <h1>Shark Clipper</h1>
             </div>
-            <div class='file-upload-screen'>
-                <label for='upload-file'>Choose a Video File</label>
-                <br />
-                <input type='file' class='file-selector' name='upload-file' onchange='uploadVideo()' />
-            </div>
-            <div class='work-screen'>
-                <div class='page-section video-area'>
-                    <div class='video-container'>
+            <div class='content'>
+                <div class='file-upload-screen'>
+                    <div class='file-upload-area'>
+                        <label for='upload-file'>Choose a Video File</label>
+                        <br />
+                        <input type='file' class='file-selector' name='upload-file' onchange='uploadVideo()' />
                     </div>
                 </div>
-
-                <div class='page-section control-area'>
-                    <button onclick='toggleSelection()'>Toggle Selection Box</button>
-                    <button onclick='captureFrame()'>Take Screenshot</button>
+                <div class='loading-screen'>
+                    <div class='loading-container'>
+                        <div class='spinner-container'>
+                            <img class='spinner' src='/static/images/shark-loading.png' />
+                        </div>
+                    </div>
                 </div>
+                <div class='work-screen'>
+                    <div class='work-area'>
+                        <div class='page-section video-area'>
+                            <div class='video-container'>
+                            </div>
+                        </div>
 
-                <div class='page-section screenshot-area'>
+                        <div class='page-section control-area'>
+                            <button onclick='toggleSelection()'>Toggle Selection Box</button>
+                            <button onclick='captureFrame()'>Take Screenshot</button>
+                        </div>
+
+                        <div class='page-section screenshot-area'>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
