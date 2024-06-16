@@ -33,3 +33,7 @@ You can edit some attributes of the screenshot before saving.
 Once you are happy with your screenshots and data, you can save your work.
 This will write the encoded video, screenshots, and all metadata to your "output" directory
 (which defaults to a directory called "out" in the same place you started the server).
+
+## Notes
+
+ - Currently, all times are shown in your local timezone (the one your computer uses).

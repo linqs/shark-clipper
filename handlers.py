@@ -59,7 +59,7 @@ def video(handler, path,
 
     response = {
         'video_id': video_id,
-        'original_name': filename,
+        'original_name': os.path.splitext(filename)[0],
         'path': '/'.join(['/temp', 'webencode', new_filename]),
         'type': 'video/mp4',
         'key_metadata': key_metadata,

@@ -84,11 +84,6 @@ img.spinner {
     position: relative;
 }
 
-.video-container video {
-    width: 640px;
-    height: 360px;
-}
-
 .video-container .selection {
     position: absolute;
     top: 0;
@@ -121,7 +116,7 @@ img.spinner {
     gap: 20px;
 }
 
-.screenshot-area .screenshot {
+.media-metadata-container {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -130,15 +125,29 @@ img.spinner {
     align-content: center;
 }
 
-.screenshot-area .screenshot .image-area {
+.media-area {
     width: 45%;
 }
 
-.screenshot-area .screenshot .image-area img {
+.media-area img,
+.media-area video {
     max-width: 100%;
 }
 
-.screenshot-area .screenshot .metadata-area {
+.metadata-area {
     width: 45%;
-    padding-left: 50px;
+    padding-left: 2em;
+    padding-right: 1em;
+}
+
+.metadata-area > div {
+    text-align-last: justify;
+}
+
+.metadata-area label {
+    padding-right: 1em;
+}
+
+.metadata-area input {
+    padding-right: 1em;
 }
