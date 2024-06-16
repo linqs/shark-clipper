@@ -64,18 +64,21 @@ def get_key_metadata(path):
             except:
                 pass
 
-    return data
+    return data, all_metadata
 
 # Perform a low(ish) quality encoding so we can quickly work with with a video in a browser.
 def transcode_for_web(in_path, out_path, video_id):
     if (not out_path.endswith('.mp4')):
         out_path = os.path.splitext(out_path)[0] + '.mp4'
 
-    metadata = get_key_metadata(in_path)
+    key_metadata, all_metadata = get_key_metadata(in_path)
 
     # Add additional metadata.
-    metadata['video_id'] = video_id
-    metadata['encoded_at_unix'] = int(datetime.datetime.now().timestamp())
+    key_metadata['video_id'] = video_id
+    key_metadata['encoded_at_unix'] = int(datetime.datetime.now().timestamp())
+
+    all_metadata['video_id'] = video_id
+    all_metadata['encoded_at_unix'] = int(datetime.datetime.now().timestamp())
 
     args = [
         'ffmpeg',
@@ -98,14 +101,14 @@ def transcode_for_web(in_path, out_path, video_id):
         # Allow arbitrary metadata.
         '-movflags', '+use_metadata_tags',
         # Metadata
-        '-metadata', "shark-clipper=%s" % (json.dumps(metadata)),
+        '-metadata', "shark-clipper=%s" % (json.dumps(key_metadata)),
         # Output file.
         out_path,
     ]
 
     _run(args, 'ffmpeg')
 
-    return out_path
+    return out_path, key_metadata, all_metadata
 
 def _run(args, name):
     result = subprocess.run(args, capture_output = True)

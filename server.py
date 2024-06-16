@@ -13,6 +13,8 @@ THIS_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 DEFAULT_PORT = 12345
 ENCODING = 'utf-8'
 
+DEFAULT_OUT_DIRNAME = 'out'
+
 # Routes for the server.
 # First matching route will be used.
 # Handler functions should take two arguments: the handler, the path.
@@ -28,10 +30,17 @@ ROUTES = [
     (r'^/static/', handlers.static),
     (r'^/temp/', handlers.temp),
     (r'^/video$', handlers.video),
+    (r'^/save$', handlers.save),
 ]
 
 class Handler(http.server.BaseHTTPRequestHandler):
-    _temp_dir = util.get_temp_path(prefix = 'shark-clipper', rm = True)
+    _temp_dir = None
+    _out_dir = None
+
+    @classmethod
+    def init(cls, out_dir = DEFAULT_OUT_DIRNAME, cleanup_temp = True, **kwargs):
+        cls._temp_dir = util.get_temp_path(prefix = 'shark-clipper', rm = cleanup_temp)
+        cls._out_dir = os.path.abspath(out_dir)
 
     def log_message(self, format, *args):
         return
@@ -40,8 +49,25 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self._do_request()
 
     def do_POST(self):
-        params = self._read_post_file()
+        params = {}
+
+        if (self.headers.get('shark-clipper-upload', False)):
+            params = self._read_post_file()
+        elif (self.headers.get('shark-clipper-save', False)):
+            params = self._read_json_body()
+
         self._do_request(**params)
+
+    def _read_json_body(self):
+        length = int(self.headers.get('content-length', 0))
+        if (length <= 0):
+            return {}
+
+        data = json.loads(self.rfile.read(length))
+
+        return {
+            'data': data,
+        }
 
     def _read_post_file(self):
         filename = self.headers.get('shark-clipper-filename', '')
@@ -118,7 +144,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 break
 
         try:
-            return target(self, path, temp_dir = Handler._temp_dir, **kwargs)
+            return target(self, path,
+                    temp_dir = Handler._temp_dir, out_dir = Handler._out_dir,
+                    **kwargs)
         except:
             print("Error on path '%s', handler '%s'.", path, str(target))
             traceback.print_exc()
@@ -127,6 +155,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
 def run(port = DEFAULT_PORT, **kwargs):
     print("Serving on 127.0.0.1:%d ." % (port))
+
+    Handler.init(**kwargs)
 
     server = http.server.HTTPServer(('', port), Handler)
     server.serve_forever()

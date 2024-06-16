@@ -31,6 +31,14 @@ def _get_parser():
         action = 'store', type = int, default = server.DEFAULT_PORT,
         help = 'Port to launch the web GUI on (default: %(default)s).')
 
+    parser.add_argument('--out', dest = 'out_dir',
+        action = 'store', type = str, default = server.DEFAULT_OUT_DIRNAME,
+        help = 'Where to store output files (default: %(default)s).')
+
+    parser.add_argument('--no-cleanup', dest = 'cleanup_temp',
+        action = 'store_false', default = True,
+        help = 'Do not cleanup any intermitent results (good for debugging) (default: %(default)s).')
+
     return parser
 
 if __name__ == '__main__':

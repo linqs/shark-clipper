@@ -2,6 +2,7 @@
 
 window.shark = window.shark || {};
 
+window.shark.info = window.shark.info || {};
 window.shark.screenshots = window.shark.screenshots || {};
 
 function goToLoadingScreen() {
@@ -22,6 +23,37 @@ function goToWorkScreen() {
     document.querySelector('.work-screen').style.display = 'initial';
 }
 
+function save() {
+    let promise = fetch('/save', {
+        method: 'POST',
+        body: JSON.stringify({
+            // TEST - We will have real attributes with the video soon.
+            'video': {
+                'id': window.shark.info['video_id'],
+                'name': window.shark.info['video_id'],
+            },
+            'screenshots': window.shark.screenshots,
+            'key_metadata': window.shark.info['key_metadata'],
+            'all_metadata': window.shark.info['all_metadata'],
+        }),
+        headers: {
+            'shark-clipper-save': true,
+        },
+    });
+
+    goToLoadingScreen();
+
+    promise
+        .then(function(response) {
+            goToWorkScreen();
+        })
+        .catch(function(response) {
+            console.error("Failed to save screenshots.");
+            console.error(response);
+            goToWorkScreen();
+        });
+}
+
 function uploadVideo() {
     let file = document.querySelector('input.file-selector').files[0];
 
@@ -40,8 +72,12 @@ function uploadVideo() {
     promise
         .then(function(response) {
             response.json()
-                .then(function(body) {
-                    initVideo(body);
+                .then(function(info) {
+                    window.shark.info['video_id'] = info.video_id;
+                    window.shark.info['key_metadata'] = info.key_metadata;
+                    window.shark.info['all_metadata'] = info.all_metadata;
+
+                    initVideo(info);
                     goToWorkScreen();
                 })
                 .catch(function(response) {
