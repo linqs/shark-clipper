@@ -148,9 +148,11 @@ function initVideo(info) {
 }
 
 function toggleSelection() {
-    // TEST - toggle
-
-    makeSelectionBox('.video-container');
+    if (document.querySelector(`.video-container .selection`)) {
+        removeSelectionBox('.video-container');
+    } else {
+        makeSelectionBox('.video-container');
+    }
 }
 
 function captureFrame() {

@@ -6,6 +6,10 @@ window.shark = window.shark || {};
 
 const MIN_DIM = 50;
 
+function removeSelectionBox(containerQuery) {
+    document.querySelector(`${containerQuery} .selection`).remove();
+}
+
 function makeSelectionBox(containerQuery) {
     let container = document.querySelector(containerQuery);
 
