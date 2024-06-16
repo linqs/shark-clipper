@@ -154,7 +154,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return None, http.HTTPStatus.INTERNAL_SERVER_ERROR, None
 
 def run(port = DEFAULT_PORT, **kwargs):
-    print("Serving on 127.0.0.1:%d ." % (port))
+    print("Serving on http://127.0.0.1:%d ." % (port))
 
     Handler.init(**kwargs)
 
