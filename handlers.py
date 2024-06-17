@@ -1,9 +1,13 @@
 import datetime
 import http
+import io
 import json
 import mimetypes
 import os
 import shutil
+
+import PIL.ExifTags
+import PIL.Image
 
 import ffmpeg
 import util
@@ -82,10 +86,22 @@ def save(handler, path, temp_dir = None, data = None, out_dir = None, **kwargs):
     # Save screenshots.
     for screenshot in data.get('screenshots', {}).values():
         image_bytes, extension = util.data_url_to_bytes(screenshot['dataURL'])
-
         path = os.path.join(out_dir, screenshot['name'] + extension)
-        with open(path, 'wb') as file:
-            file.write(image_bytes)
+
+        metadata = {
+            'video': data.get('key_metadata', {}).copy(),
+            'image': screenshot.copy(),
+        }
+        del metadata['image']['dataURL']
+
+        image = PIL.Image.open(io.BytesIO(image_bytes))
+
+        # This seems correct, but some tools will complain about the encoding:
+        # https://github.com/python-pillow/Pillow/issues/5254
+        exif = image.getexif()
+        exif[PIL.ExifTags.Base.UserComment] = json.dumps(metadata)
+
+        image.save(path, exif = exif)
 
     # Save metadata.
     metadata_path = os.path.join(out_dir, METADATA_FILENAME)
