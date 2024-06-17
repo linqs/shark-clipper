@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+import argparse
 import datetime
 import json
 import logging
@@ -5,6 +8,9 @@ import os
 import re
 import shutil
 import subprocess
+import sys
+
+import util
 
 def is_available():
     if (shutil.which('ffmpeg') is None):
@@ -116,3 +122,26 @@ def _run(args, name):
         raise ValueError("%s did not exit cleanly.\n--- stdout ---\n%s\n---\n--- stderr ---%s\n---" % (name, result.stdout, result.stderr))
 
     return result.stdout, result.stderr
+
+def main():
+    args = _get_parser().parse_args()
+
+    transcode_for_web(args.source, args.dest, util.get_uuid())
+
+    return 0
+
+def _get_parser():
+    parser = argparse.ArgumentParser(description = 'Perform a web encoding using the default settings.')
+
+    parser.add_argument('source',
+        action = 'store', type = str,
+        help = 'Source file.')
+
+    parser.add_argument('dest',
+        action = 'store', type = str,
+        help = 'Destination file.')
+
+    return parser
+
+if __name__ == '__main__':
+    sys.exit(main())
