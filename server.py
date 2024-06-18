@@ -1,9 +1,9 @@
 import http
 import http.server
 import json
+import logging
 import os
 import re
-import traceback
 
 import handlers
 import util
@@ -105,8 +105,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         }
 
     def _do_request(self, **kwargs):
-        # TEST
-        print(self.path)
+        logging.debug("Serving: " + self.path)
 
         code = http.HTTPStatus.OK
         headers = {}
@@ -158,14 +157,13 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return target(self, path,
                     temp_dir = Handler._temp_dir, out_dir = Handler._out_dir,
                     **kwargs)
-        except:
-            print("Error on path '%s', handler '%s'.", path, str(target))
-            traceback.print_exc()
+        except Exception as ex:
+            logging.error("Error on path '%s', handler '%s'.", path, str(target), exc_info = ex)
 
             return None, http.HTTPStatus.INTERNAL_SERVER_ERROR, None
 
 def run(port = DEFAULT_PORT, **kwargs):
-    print("Serving on http://127.0.0.1:%d ." % (port))
+    logging.info("Serving on http://127.0.0.1:%d ." % (port))
 
     Handler.init(**kwargs)
 

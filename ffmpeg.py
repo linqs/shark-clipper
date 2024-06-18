@@ -6,17 +6,25 @@ import json
 import logging
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import sys
 
+import log
 import util
 
-def is_available():
+def is_available(log_result = True):
     if (shutil.which('ffmpeg') is None):
+        if (log_result):
+            logging.warn("Could not locate 'ffmpeg' executable.")
+
         return False
 
     if (shutil.which('ffprobe') is None):
+        if (log_result):
+            logging.warn("Could not locate 'ffprobe' executable.")
+
         return False
 
     return True
@@ -33,10 +41,6 @@ def get_all_metadata(path):
         '-show_streams',
         path,
     ]
-
-    result = subprocess.run(args, capture_output = True)
-    if (result.returncode != 0):
-        raise ValueError("ffmpeg did not exit cleanly.\n--- stdout ---\n%s\n---\n--- stderr ---%s\n---" % (result.stdout, result.stderr))
 
     stdout, _ = _run(args, 'ffprobe')
     return json.loads(stdout)
@@ -117,6 +121,8 @@ def transcode_for_web(in_path, out_path, video_id):
     return out_path, key_metadata, all_metadata
 
 def _run(args, name):
+    logging.debug(shlex.join(args))
+
     result = subprocess.run(args, capture_output = True)
     if (result.returncode != 0):
         raise ValueError("%s did not exit cleanly.\n--- stdout ---\n%s\n---\n--- stderr ---%s\n---" % (name, result.stdout, result.stderr))
@@ -125,6 +131,7 @@ def _run(args, name):
 
 def main():
     args = _get_parser().parse_args()
+    log.init_from_args(args)
 
     transcode_for_web(args.source, args.dest, util.get_uuid())
 
@@ -140,6 +147,8 @@ def _get_parser():
     parser.add_argument('dest',
         action = 'store', type = str,
         help = 'Destination file.')
+
+    log.set_cli_args(parser)
 
     return parser
 

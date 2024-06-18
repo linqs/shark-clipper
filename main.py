@@ -3,26 +3,27 @@
 import argparse
 import sys
 
-import server
+import log
 import ffmpeg
+import server
 
-def check_requirements(**kwargs):
+def check_requirements():
     result = True
 
     if (not ffmpeg.is_available()):
-        print("Could not locate 'ffmpeg'.")
         result = False
 
     return result
 
 def main():
-    args = vars(_get_parser().parse_args())
+    args = _get_parser().parse_args()
+    log.init_from_args(args)
 
-    if (not check_requirements(**args)):
+    if (not check_requirements()):
         print("Not all requirements to run tool are met.")
         return 1
 
-    server.run(**args)
+    server.run(**(vars(args)))
 
     return 0
 
@@ -40,6 +41,8 @@ def _get_parser():
     parser.add_argument('--no-cleanup', dest = 'cleanup_temp',
         action = 'store_false', default = True,
         help = 'Do not cleanup any intermitent results (good for debugging) (default: %(default)s).')
+
+    log.set_cli_args(parser)
 
     return parser
 
