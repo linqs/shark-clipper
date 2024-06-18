@@ -169,5 +169,5 @@ def run(port = DEFAULT_PORT, **kwargs):
 
     Handler.init(**kwargs)
 
-    server = http.server.HTTPServer(('', port), Handler)
+    server = http.server.ThreadingHTTPServer(('', port), Handler)
     server.serve_forever()
