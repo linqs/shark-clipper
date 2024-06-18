@@ -45,6 +45,17 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         return
 
+    def handle(self):
+        """
+        Override handle() to ignore dropped connections.
+        """
+
+        try:
+            return http.server.BaseHTTPRequestHandler.handle(self)
+        except BrokenPipeError as ex:
+            # TODO: Log
+            pass
+
     def do_GET(self):
         self._do_request()
 
