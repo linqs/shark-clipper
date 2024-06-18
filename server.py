@@ -160,7 +160,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         except Exception as ex:
             logging.error("Error on path '%s', handler '%s'.", path, str(target), exc_info = ex)
 
-            return None, http.HTTPStatus.INTERNAL_SERVER_ERROR, None
+            return str(ex), http.HTTPStatus.INTERNAL_SERVER_ERROR, None
 
 def run(port = DEFAULT_PORT, **kwargs):
     logging.info("Serving on http://127.0.0.1:%d ." % (port))

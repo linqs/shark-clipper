@@ -2,6 +2,7 @@ import datetime
 import http
 import io
 import json
+import logging
 import mimetypes
 import os
 import shutil
@@ -59,7 +60,12 @@ def video(handler, path,
     new_path = os.path.join(temp_dir, 'webencode', new_filename)
     os.makedirs(os.path.dirname(new_path), exist_ok = True)
 
-    new_path, key_metadata, all_metadata = ffmpeg.transcode_for_web(uploaded_path, new_path, video_id)
+    try:
+        new_path, key_metadata, all_metadata = ffmpeg.transcode_for_web(uploaded_path, new_path, video_id)
+    except Exception as ex:
+        message = "Failed to encode video '%s' for web." % (filename)
+        logging.error(message, exc_info = ex)
+        return message, http.HTTPStatus.INTERNAL_SERVER_ERROR, None
 
     response = {
         'video_id': video_id,

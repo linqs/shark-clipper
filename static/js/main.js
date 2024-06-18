@@ -23,6 +23,40 @@ function goToWorkScreen() {
     document.querySelector('.work-screen').style.display = 'initial';
 }
 
+function outputError(message, extra = undefined) {
+    console.error(message);
+    if (extra) {
+        console.log(extra);
+    }
+
+    window.alert(message);
+}
+
+// Return false if the response is bad and processing should not continue, true otherwise.
+function checkSeverResponse(baseErrorMessage, response) {
+    if (response.ok) {
+        return true;
+    }
+
+    response.text()
+        .then(function(text_body) {
+            text_body = text_body.trim();
+            if (text_body.length === 0) {
+                outputError(baseErrorMessage);
+            } else {
+                outputError(`${baseErrorMessage} Message from server "${text_body}".`);
+            }
+        })
+        .catch(function(body) {
+            outputError(baseErrorMessage, body);
+        })
+        .finally(function() {
+            goToUploadScreen();
+        });
+
+    return false;
+}
+
 function save() {
     let promise = fetch('/save', {
         method: 'POST',
@@ -41,11 +75,12 @@ function save() {
 
     promise
         .then(function(response) {
-            goToWorkScreen();
+            checkSeverResponse('Failed to save screenshots.', response);
         })
         .catch(function(response) {
-            console.error("Failed to save screenshots.");
-            console.error(response);
+            outputError('Failed to save screenshots.', response);
+        })
+        .finally(function() {
             goToWorkScreen();
         });
 }
@@ -67,20 +102,22 @@ function uploadVideo() {
 
     promise
         .then(function(response) {
+            if (!checkSeverResponse('Failed to upload video.', response)) {
+                return;
+            }
+
             response.json()
                 .then(function(info) {
                     initVideo(info);
                     goToWorkScreen();
                 })
                 .catch(function(response) {
-                    console.error("Failed to decode video response (json) body.");
-                    console.error(response);
+                    outputError("Failed to decode video response from server.", response);
                     goToUploadScreen();
                 });
         })
         .catch(function(response) {
-            console.error("Failed to upload video.");
-            console.error(response);
+            outputError("Failed to upload video.", response);
             goToUploadScreen();
         });
 }
