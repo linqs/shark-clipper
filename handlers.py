@@ -81,7 +81,8 @@ def video(handler, path,
 # Save the temp video and any screenshots to disk.
 def save(handler, path, temp_dir = None, data = None, out_dir = None, **kwargs):
     # Suffix the base out dir for this specific video.
-    out_dir = os.path.join(out_dir, data['video']['id'])
+    id_prefix = data['video']['id'].split('-')[0]
+    out_dir = os.path.join(out_dir, data['video']['name'] + '-' + id_prefix)
     os.makedirs(out_dir, exist_ok = True)
 
     # Save (copy) web-encoded video.
