@@ -53,8 +53,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         try:
             return http.server.BaseHTTPRequestHandler.handle(self)
         except BrokenPipeError as ex:
-            # TODO: Log
-            pass
+            logging.info("Connection closed on the client side.")
 
     def do_GET(self):
         self._do_request()
