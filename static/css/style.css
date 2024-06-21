@@ -80,7 +80,7 @@ button {
 }
 
 img.spinner {
-    width: 50%;
+    height: 75vh;
     animation: rotation 4s infinite linear;
 }
 
