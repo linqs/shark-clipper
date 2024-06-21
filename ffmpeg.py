@@ -120,6 +120,28 @@ def transcode_for_web(in_path, out_path, video_id):
 
     return out_path, key_metadata, all_metadata
 
+# Copy a file with new metadata,
+def copy_with_metadata(in_path, out_path, metadata):
+    args = [
+        'ffmpeg',
+        # Input file.
+        '-i', in_path,
+        # Override any existing output.
+        '-y',
+        # Map all video streams.
+        '-map', '0:v',
+        # Copy all streams.
+        '-c', 'copy',
+        # Allow arbitrary metadata.
+        '-movflags', '+use_metadata_tags',
+        # Metadata
+        '-metadata', "shark-clipper=%s" % (json.dumps(metadata)),
+        # Output file.
+        out_path,
+    ]
+
+    _run(args, 'ffmpeg')
+
 def _run(args, name):
     logging.debug(shlex.join(args))
 
