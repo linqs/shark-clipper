@@ -218,14 +218,11 @@ function captureFrame() {
 
 function addScreenshot(screenshot) {
     window.shark.screenshots[screenshot.id] = screenshot;
-
     let time_input_value = convertUnixSecsForInput(screenshot.time);
 
     let html = `
         <div class='screenshot media-metadata-container'>
-            <div class='image-area media-area' width='${screenshot.width}' height='${screenshot.height}'>
-                <img src='${screenshot.dataURL}' />
-            </div>
+            <canvas class='image-area media-area' width='${screenshot.width}' height='${screenshot.height}'></canvas>
             <div class='metadata-area'>
                 <div>
                     <label for='name'>Name</label>
@@ -240,11 +237,39 @@ function addScreenshot(screenshot) {
                             data-screenshot='${screenshot.id}'
                             value='${time_input_value}' />
                 </div>
+                <button onclick='flipImage(this, "${screenshot.id}")'>Flip Image</button>
             </div>
         </div>
     `;
-
+    
     document.querySelector('.screenshot-area').insertAdjacentHTML('beforeend', html);
+    
+    // Find canvas, create image
+    let canvas_list = document.querySelectorAll('.image-area');
+    let canvas = canvas_list[canvas_list.length - 1]
+    let context = canvas.getContext('2d');
+    let img = new Image();
+    img.src = screenshot.dataURL;
+    // Add the image to the newly added canvas
+    img.onload = function() {
+        context.drawImage(img, 0, 0);
+    };
+}
+
+// Flip an image in the screenshot area by adding it the the canvas flipped horizontally
+function flipImage(element, screenshot_id) {
+    // Find canvas and image
+    let canvas = element.parentElement.previousElementSibling;
+    let context = canvas.getContext('2d');
+    let img = new Image();
+    img.src = canvas.toDataURL('image/jpeg');
+    // Add image as flipped version
+    img.onload = function() {
+        context.reset();
+        context.scale(-1, 1)
+        context.drawImage(img, -img.width, 0);
+        window.shark.screenshots[screenshot_id]['dataURL'] = canvas.toDataURL('image/jpeg');
+    };
 }
 
 // Edit the global video record (which may change screenshots).
