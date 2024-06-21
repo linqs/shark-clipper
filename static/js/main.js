@@ -153,28 +153,28 @@ function initVideo(info) {
         </div>
         <div class='metadata-area'>
             <div>
-                <label for='name'>Name</label>
+                <label for='name'>Name:</label>
                 <input type='text' name='name'
                         data-video-id='${info.video_id}'
                         onchange='editVideo(this, "name")'
                         value='${info.original_name}' />
             </div>
             <div>
-                <label for='name'>Video Start Time</label>
+                <label for='name'>Video Start Time:</label>
                 <input type='datetime-local' name='start_time'
                         data-video-id='${info.video_id}'
                         onchange='editVideo(this, "start_time")'
                         value='${start_time_input_value}' />
             </div>
             <div>
-                <label for='latitude'>Latitude</label>
+                <label for='latitude'>Latitude:</label>
                 <input type='number' name='latitude' step='0.01'
                         data-video-id='${info.video_id}'
                         onchange='editVideo(this, "latitude")'
                         value='${latitude}' />
             </div>
             <div>
-                <label for='longitude'>Longitude</label>
+                <label for='longitude'>Longitude:</label>
                 <input type='number' name='longitude' step='0.01'
                         data-video-id='${info.video_id}'
                         onchange='editVideo(this, "longitude")'
@@ -228,14 +228,14 @@ function addScreenshot(screenshot) {
             </div>
             <div class='metadata-area'>
                 <div>
-                    <label for='name'>Name</label>
+                    <label for='name'>Name:</label>
                     <input type='text' name='name'
                             data-screenshot='${screenshot.id}'
                             onchange='editScreenshot(this, "${screenshot.id}", "name")'
                             value='${screenshot.name}' />
                 </div>
                 <div>
-                    <label for='time'>Time</label>
+                    <label for='time'>Time:</label>
                     <input type='datetime-local' name='time' readonly='true' disabled
                             data-screenshot='${screenshot.id}'
                             value='${time_input_value}' />
