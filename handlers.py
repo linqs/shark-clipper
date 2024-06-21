@@ -5,7 +5,6 @@ import json
 import logging
 import mimetypes
 import os
-import shutil
 
 import PIL.ExifTags
 import PIL.Image
@@ -84,12 +83,8 @@ def save(handler, path, temp_dir = None, data = None, out_dir = None, **kwargs):
     out_dir = os.path.join(out_dir, data['video']['id'])
     os.makedirs(out_dir, exist_ok = True)
 
-    # Save (copy) web-encoded video.
-    old_path = os.path.join(temp_dir, 'webencode', data['video']['id'] + '.mp4')
-    new_path = os.path.join(out_dir, data['video']['name'] + '.mp4')
-    shutil.copy2(old_path, new_path)
-
     # Save screenshots.
+    screenshots_metadata = []
     for screenshot in data.get('screenshots', {}).values():
         image_bytes, extension = util.data_url_to_bytes(screenshot['dataURL'])
         path = os.path.join(out_dir, screenshot['name'] + extension)
@@ -100,6 +95,8 @@ def save(handler, path, temp_dir = None, data = None, out_dir = None, **kwargs):
         }
         del metadata['image']['dataURL']
 
+        screenshots_metadata.append(metadata)
+
         image = PIL.Image.open(io.BytesIO(image_bytes))
 
         # This seems correct, but some tools will complain about the encoding:
@@ -109,14 +106,23 @@ def save(handler, path, temp_dir = None, data = None, out_dir = None, **kwargs):
 
         image.save(path, exif = exif)
 
-    # Save metadata.
+    # Save web-encoded video with new metadata.
+    video_metadata = data['video'].copy()
+    video_metadata['screenshots'] = [metadata['image'] for metadata in screenshots_metadata]
+    old_path = os.path.join(temp_dir, 'webencode', data['video']['id'] + '.mp4')
+    new_path = os.path.join(out_dir, data['video']['name'] + '.mp4')
+    ffmpeg.copy_with_metadata(old_path, new_path, video_metadata)
+
+    # Save all metadata.
+    metadata = {
+        'saved_at_unix': int(datetime.datetime.now().timestamp()),
+        'video': data['video'],
+        'screenshots': screenshots_metadata,
+        'key': data.get('key_metadata', {}),
+        'all': data.get('all_metadata', {}),
+    }
     metadata_path = os.path.join(out_dir, METADATA_FILENAME)
     with open(metadata_path, 'w') as file:
-        metadata = {
-            'saved_at_unix': int(datetime.datetime.now().timestamp()),
-            'key': data.get('key_metadata', {}),
-            'all': data.get('all_metadata', {}),
-        }
         json.dump(metadata, file, indent = 4)
 
     return {}, None, None
