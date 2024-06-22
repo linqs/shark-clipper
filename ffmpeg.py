@@ -14,6 +14,11 @@ import sys
 import log
 import util
 
+SHARK_TAG_NAME = 'shark-clipper'
+
+# Do not transcode (just copy) files with these formats.
+NO_TRANSCODE_WEB_CODECS = ['h264']
+
 def is_available(log_result = True):
     if (shutil.which('ffmpeg') is None):
         if (log_result):
@@ -28,6 +33,18 @@ def is_available(log_result = True):
         return False
 
     return True
+
+# For each video stream, return the codex (or None is unknown).
+def get_video_codecs(metadata):
+    codecs = []
+
+    for stream in metadata.get('streams', []):
+        if (stream.get('codec_type', None) != 'video'):
+            continue
+
+        codecs.append(stream.get('codec_name', None))
+
+    return codecs
 
 # Get the metadata from a file.
 # The metadata will be in a dict, but there are no guarentees on the structure,
@@ -46,7 +63,7 @@ def get_all_metadata(path):
     return json.loads(stdout)
 
 # Get metadata that we believe is important.
-def get_key_metadata(path):
+def get_key_metadata(path, override_with_shark_data = True):
     data = {}
     all_metadata = get_all_metadata(path)
 
@@ -71,8 +88,18 @@ def get_key_metadata(path):
             try:
                 parsed_time = datetime.datetime.fromisoformat(text_time)
                 data['start_time_unix'] = int(parsed_time.timestamp())
-            except:
-                pass
+            except Exception as ex:
+                logging.warn("Invalid start/creation time found in file metadata.", exc_info = ex)
+
+        if ((override_with_shark_data) and (SHARK_TAG_NAME in tags)):
+            shark_data_str = tags[SHARK_TAG_NAME].strip()
+
+            try:
+                shark_data = json.loads(shark_data_str)
+            except Exception as ex:
+                logging.warn("Invalid (json) shark data found in file metadata.", exc_info = ex)
+
+            data.update(shark_data)
 
     return data, all_metadata
 
@@ -83,13 +110,23 @@ def transcode_for_web(in_path, out_path, video_id):
 
     key_metadata, all_metadata = get_key_metadata(in_path)
 
-    # Add additional metadata.
+    # Add/override additional metadata.
     key_metadata['video_id'] = video_id
     key_metadata['encoded_at_unix'] = int(datetime.datetime.now().timestamp())
 
     all_metadata['video_id'] = video_id
     all_metadata['encoded_at_unix'] = int(datetime.datetime.now().timestamp())
 
+    video_codecs = get_video_codecs(all_metadata)
+    transcode_codecs = set(video_codecs) - set(NO_TRANSCODE_WEB_CODECS)
+    if (len(transcode_codecs) > 0):
+        _transcode_with_metadata(in_path, out_path, key_metadata)
+    else:
+        copy_with_metadata(in_path, out_path, key_metadata)
+
+    return out_path, key_metadata, all_metadata
+
+def _transcode_with_metadata(in_path, out_path, metadata):
     args = [
         'ffmpeg',
         # Input file.
@@ -106,19 +143,19 @@ def transcode_for_web(in_path, out_path, video_id):
         '-preset', 'ultrafast',
         # Use a lossy CRF.
         '-crf', '28',
+        # Copy stream-based metadata.
+        '-map_metadata', '0',
         # MP4
         '-f', 'mp4',
         # Allow arbitrary metadata.
         '-movflags', '+use_metadata_tags',
         # Metadata
-        '-metadata', "shark-clipper=%s" % (json.dumps(key_metadata)),
+        '-metadata', "%s=%s" % (SHARK_TAG_NAME, json.dumps(metadata)),
         # Output file.
         out_path,
     ]
 
     _run(args, 'ffmpeg')
-
-    return out_path, key_metadata, all_metadata
 
 # Copy a file with new metadata,
 def copy_with_metadata(in_path, out_path, metadata):
@@ -132,10 +169,12 @@ def copy_with_metadata(in_path, out_path, metadata):
         '-map', '0:v',
         # Copy all streams.
         '-c', 'copy',
+        # Copy stream-based metadata.
+        '-map_metadata', '0',
         # Allow arbitrary metadata.
         '-movflags', '+use_metadata_tags',
         # Metadata
-        '-metadata', "shark-clipper=%s" % (json.dumps(metadata)),
+        '-metadata', "%s=%s" % (SHARK_TAG_NAME, json.dumps(metadata)),
         # Output file.
         out_path,
     ]
