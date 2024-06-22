@@ -145,6 +145,7 @@ img.spinner {
 
 .media-area {
     width: 45%;
+    border-radius: 10px;
 }
 
 .image-area {
@@ -156,6 +157,7 @@ img.spinner {
 .media-area video {
     max-width: 100%;
     height: 100%;
+    border-radius: 10px;
 }
 
 .metadata-area {
@@ -172,4 +174,6 @@ img.spinner {
 }
 
 .metadata-area input {
+    border-radius: 10px;
+    padding: 5px;
 }
