@@ -221,9 +221,9 @@ function addScreenshot(screenshot) {
     let time_input_value = convertUnixSecsForInput(screenshot.time);
 
     let html = `
-        <div class='screenshot media-metadata-container'>
+        <div class='screenshot media-metadata-container' data-id='${screenshot.id}'>
             <div class='image-area media-area' width='${screenshot.width}' height='${screenshot.height}'>
-                <img src='${screenshot.dataURL}' data-screenshot='${screenshot.id}'>
+                <img src='${screenshot.dataURL}'/>
             </div>
             <div class='metadata-area'>
                 <div>
@@ -252,8 +252,8 @@ function addScreenshot(screenshot) {
 // Flip an image in the screenshot area by adding it the the canvas flipped horizontally.
 function flipImage(screenshot_id) {
     // Find correct image, add to canvas to flip.
-    let img = document.querySelector(`img[data-screenshot="${screenshot_id}"]`);
-    
+    let img = document.querySelector(`.screenshot[data-id="${screenshot_id}"] img`);
+        
     let canvas = document.createElement('canvas');
     canvas.width = img.naturalWidth;
     canvas.height = img.naturalHeight;
