@@ -145,16 +145,20 @@ img.spinner {
 
 .media-area {
     width: 45%;
+    text-align: center;
+}
+
+.media-area-background {
     border-radius: 10px;
     outline: #333 solid 2px;
     box-shadow: #333 2px 2px 2px;
+    background-color: #333;
 }
 
 .image-area {
 }
 
 .media-area.video-container {
-    background-color: #333;
 }
 
 .media-area img,

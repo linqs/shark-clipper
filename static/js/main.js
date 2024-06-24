@@ -146,7 +146,7 @@ function initVideo(info) {
 
     let videoContainer = document.querySelector('.work-screen .video-area');
     videoContainer.innerHTML = `
-        <div class='video-container media-area'>
+        <div class='video-container media-area media-area-background'>
             <video controls>
                 <source src='${info.path}' type='${info.type}' />
             </video>
@@ -223,7 +223,7 @@ function addScreenshot(screenshot) {
     let html = `
         <div class='screenshot media-metadata-container' data-id='${screenshot.id}'>
             <div class='image-area media-area' width='${screenshot.width}' height='${screenshot.height}'>
-                <img src='${screenshot.dataURL}'/>
+                <img class='media-area-background' src='${screenshot.dataURL}'/>
             </div>
             <div class='metadata-area'>
                 <div>
