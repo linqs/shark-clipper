@@ -223,7 +223,7 @@ function addScreenshot(screenshot) {
     let html = `
         <div class='screenshot media-metadata-container'>
             <div class='image-area media-area' width='${screenshot.width}' height='${screenshot.height}'>
-                <img src='${screenshot.dataURL}' />
+                <img src='${screenshot.dataURL}' data-screenshot='${screenshot.id}'>
             </div>
             <div class='metadata-area'>
                 <div>
@@ -240,7 +240,7 @@ function addScreenshot(screenshot) {
                             value='${time_input_value}' />
                 </div>
                 <div>
-                    <button onclick='flipImage(this, "${screenshot.id}")'>Flip Image</button>
+                    <button onclick='flipImage("${screenshot.id}")'>Flip Image</button>
                 </div>   
             </div>
         </div>
@@ -250,21 +250,23 @@ function addScreenshot(screenshot) {
 }
 
 // Flip an image in the screenshot area by adding it the the canvas flipped horizontally.
-function flipImage(element, screenshot_id) {
+function flipImage(screenshot_id) {
     // Find correct image, add to canvas to flip.
-    let img = element.parentElement.parentElement.previousElementSibling.firstElementChild;
+    let img = document.querySelector(`img[data-screenshot="${screenshot_id}"]`);
+    
     let canvas = document.createElement('canvas');
     canvas.width = img.naturalWidth;
     canvas.height = img.naturalHeight;
+    
     let context = canvas.getContext('2d');
-    context.scale(-1, 1)
+    context.scale(-1, 1);
     context.drawImage(img, -img.naturalWidth, 0);
 
     // Draw the canvas to the image area.
     img.src = canvas.toDataURL('image/jpeg');
     
     // Update image metadata and store flipped image.
-    window.shark.screenshots[screenshot_id]['flipped'] === false ? window.shark.screenshots[screenshot_id]['flipped'] = true : window.shark.screenshots[screenshot_id]['flipped'] = false
+    window.shark.screenshots[screenshot_id]['flipped'] = !Boolean(window.shark.screenshots[screenshot_id]['flipped']);
     window.shark.screenshots[screenshot_id]['dataURL'] = canvas.toDataURL('image/jpeg');
 }
 
