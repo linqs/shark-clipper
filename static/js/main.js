@@ -232,14 +232,12 @@ function addScreenshot(screenshot) {
                 <div>
                     <label for='name'>Name:</label>
                     <input type='text' name='name'
-                            data-screenshot='${screenshot.id}'
                             onchange='editScreenshot(this, "${screenshot.id}", "name")'
                             value='${screenshot.name}' />
                 </div>
                 <div>
                     <label for='time'>Time:</label>
                     <input type='datetime-local' name='time' readonly='true' disabled
-                            data-screenshot='${screenshot.id}'
                             value='${time_input_value}' />
                 </div>
                 <div>
@@ -290,7 +288,7 @@ function editVideo(element, field) {
 
             screenshot.name = name;
 
-            let input = document.querySelector(`input[name="name"][data-screenshot="${screenshot.id}"]`);
+            let input = document.querySelector(`.screenshot[data-id="${screenshot_id}"] input[name="name"]`);
             input.value = name;
         });
     } else if (field === 'start_time') {
@@ -312,7 +310,7 @@ function editVideo(element, field) {
 
             screenshot.time = time;
 
-            let input = document.querySelector(`input[name="time"][data-screenshot="${screenshot.id}"]`);
+            let input = document.querySelector(`.screenshot[data-id="${screenshot_id}"] input[name="time"]`);
             input.value = time_input_value;
         });
     } else {
