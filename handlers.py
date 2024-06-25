@@ -17,6 +17,8 @@ STATIC_DIR = os.path.join(THIS_DIR, 'static')
 
 METADATA_FILENAME_SUFFIX = '_metadata.json'
 
+EXIF_DATETIME_FORMAT = '%Y:%m:%d %H:%M:%S'
+
 # Handler funcs should take as arguments: (http handler, http (url) path, **kwargs).
 # Handler funcs should return: (payload, http code (int), headers (dict)).
 # Any return value can be None and it will be defaulted.
@@ -83,6 +85,8 @@ def video(handler, path,
 
 # Save the temp video and any screenshots to disk.
 def save(handler, path, temp_dir = None, data = None, out_dir = None, **kwargs):
+    now = datetime.datetime.now()
+
     # Out directory name is video name plus prefix of id.
     id_prefix = data['video']['id'].split('-')[0]
     out_dir = os.path.join(out_dir, data['video']['name'] + '-' + id_prefix)
@@ -103,12 +107,7 @@ def save(handler, path, temp_dir = None, data = None, out_dir = None, **kwargs):
         screenshots_metadata.append(metadata)
 
         image = PIL.Image.open(io.BytesIO(image_bytes))
-
-        # This seems correct, but some tools will complain about the encoding:
-        # https://github.com/python-pillow/Pillow/issues/5254
-        exif = image.getexif()
-        exif[PIL.ExifTags.Base.UserComment] = json.dumps(metadata)
-
+        exif = _set_exif_data(image, metadata, now)
         image.save(path, exif = exif)
 
     # Save web-encoded video with new metadata.
@@ -120,7 +119,7 @@ def save(handler, path, temp_dir = None, data = None, out_dir = None, **kwargs):
 
     # Save all metadata.
     metadata = {
-        'saved_at_unix': int(datetime.datetime.now().timestamp()),
+        'saved_at_unix': int(now.timestamp()),
         'video': data['video'],
         'screenshots': screenshots_metadata,
         'key': data.get('key_metadata', {}),
@@ -131,6 +130,32 @@ def save(handler, path, temp_dir = None, data = None, out_dir = None, **kwargs):
         json.dump(metadata, file, indent = 4)
 
     return {}, None, None
+
+def _set_exif_data(image, metadata, now):
+    exif = image.getexif()
+
+    # Write all metadata as a JSON string in the user comment.
+    # This seems correct, but some tools will complain about the encoding:
+    # https://github.com/python-pillow/Pillow/issues/5254
+    exif[PIL.ExifTags.Base.UserComment] = json.dumps(metadata)
+
+    # Set original (taken) time.
+    if ('time' in metadata['image']):
+        create_time = datetime.datetime.fromtimestamp(metadata['image']['time'], tz = datetime.timezone.utc)
+        exif[PIL.ExifTags.Base.DateTimeOriginal] = _get_exif_timestamp(create_time)
+        exif[PIL.ExifTags.Base.DateTimeDigitized] = _get_exif_timestamp(create_time)
+
+    # Set creation time (now).
+    exif[PIL.ExifTags.Base.DateTime] = _get_exif_timestamp(now)
+
+    return exif
+
+def _get_exif_timestamp(time):
+    # Set timezone to utc.
+    time = time.astimezone(datetime.timezone.utc)
+
+    # Format.
+    return time.strftime(EXIF_DATETIME_FORMAT)
 
 def _serve_file(path, not_found_message = None):
     if (not os.path.isfile(path)):
