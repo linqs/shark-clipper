@@ -23,22 +23,22 @@ jobs:
   on-success:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
-    runs-on: ${{ os }}
+    runs-on: ${{ env.os }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set Up Python ${{ python-version }}
+      - name: Set Up Python ${{ env.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ python-version }}
+          python-version: ${{ env.python-version }}
 
       - name: Cache Python Dependencies
         uses: actions/cache@v4
         with:
           path: ${{ env.pythonLocation }}
-          key: ${{ runner.os }}-os:${{ os }}-python:${{ python-version }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-os:${{ env.os }}-python:${{ env.python-version }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('requirements.txt') }}
 
       - name: Install Python Dependencies
         shell: bash
