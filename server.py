@@ -29,6 +29,7 @@ ROUTES = [
 
     (r'^/static/', handlers.static),
     (r'^/temp/', handlers.temp),
+    (r'^/version$', handlers.version),
     (r'^/video$', handlers.video),
     (r'^/save$', handlers.save),
 ]

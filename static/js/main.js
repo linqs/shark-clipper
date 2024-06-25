@@ -24,12 +24,15 @@ function goToWorkScreen() {
 }
 
 function outputError(message, extra = undefined) {
+    quietError(message, extra);
+    window.alert(message);
+}
+
+function quietError(message, extra = undefined) {
     console.error(message);
     if (extra) {
         console.log(extra);
     }
-
-    window.alert(message);
 }
 
 // Return false if the response is bad and processing should not continue, true otherwise.
@@ -390,7 +393,40 @@ function convertUnixSecsForInput(unixSeconds) {
     return offsetDate.toISOString().slice(0, 19);
 }
 
+// Fetch the server's version and add it to the page's title.
+function fetchVersion() {
+    let promise = fetch('/version', {
+        method: 'GET',
+    });
+
+    promise
+        .then(function(response) {
+            if (!response.ok) {
+                quietError("Got a failure to version request.", response);
+                return;
+            }
+
+            response.text()
+                .then(function(text_body) {
+                    text_body = text_body.trim();
+                    if (text_body.length === 0) {
+                        quietError("Got an empty version from the server.");
+                        return;
+                    }
+
+                    document.querySelector('.header').insertAdjacentHTML('beforeend', `<h2>Version ${text_body}</h2>`);
+                })
+                .catch(function(body) {
+                    quietError('Failed to get text from version response body.', response);
+                });
+        })
+        .catch(function(response) {
+            quietError('Failed to fetch server version.', response);
+        });
+}
+
 function main() {
+    fetchVersion();
     goToUploadScreen();
 }
 

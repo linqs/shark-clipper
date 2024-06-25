@@ -50,6 +50,10 @@ def temp(handler, path, temp_dir = None, **kwargs):
 
     return _serve_file(temp_path, "temp path not found: '%s'." % (path))
 
+# Get the server version.
+def version(handler, path, **kwargs):
+    return util.get_version(), None, None
+
 # Prep a video for work, and get metadata about it.
 def video(handler, path,
         video_id = None, temp_dir = None,
