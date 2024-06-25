@@ -15,7 +15,7 @@ import util
 THIS_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 STATIC_DIR = os.path.join(THIS_DIR, 'static')
 
-METADATA_FILENAME = 'metadata.json'
+METADATA_FILENAME_SUFFIX = '_metadata.json'
 
 # Handler funcs should take as arguments: (http handler, http (url) path, **kwargs).
 # Handler funcs should return: (payload, http code (int), headers (dict)).
@@ -122,7 +122,7 @@ def save(handler, path, temp_dir = None, data = None, out_dir = None, **kwargs):
         'key': data.get('key_metadata', {}),
         'all': data.get('all_metadata', {}),
     }
-    metadata_path = os.path.join(out_dir, METADATA_FILENAME)
+    metadata_path = os.path.join(out_dir, data['video']['name'] + METADATA_FILENAME_SUFFIX)
     with open(metadata_path, 'w') as file:
         json.dump(metadata, file, indent = 4)
 
