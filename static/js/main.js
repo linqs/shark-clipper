@@ -241,7 +241,7 @@ function addScreenshot(screenshot) {
                 </div>
                 <div>
                     <button onclick='flipImage("${screenshot.id}")'>Flip Image</button>
-                </div>   
+                </div>
             </div>
         </div>
     `;
@@ -253,18 +253,18 @@ function addScreenshot(screenshot) {
 function flipImage(screenshot_id) {
     // Find correct image, add to canvas to flip.
     let img = document.querySelector(`.screenshot[data-id="${screenshot_id}"] img`);
-        
+
     let canvas = document.createElement('canvas');
     canvas.width = img.naturalWidth;
     canvas.height = img.naturalHeight;
-    
+
     let context = canvas.getContext('2d');
     context.scale(-1, 1);
     context.drawImage(img, -img.naturalWidth, 0);
 
     // Draw the canvas to the image area.
     img.src = canvas.toDataURL('image/jpeg');
-    
+
     // Update image metadata and store flipped image.
     window.shark.screenshots[screenshot_id]['flipped'] = !Boolean(window.shark.screenshots[screenshot_id]['flipped']);
     window.shark.screenshots[screenshot_id]['dataURL'] = canvas.toDataURL('image/jpeg');
@@ -351,6 +351,8 @@ function takeVideoScreenshot(query, xPercent, yPercent, widthPercent, heightPerc
     return {
         'id': id,
         'name': name,
+        'x': x,
+        'y': y,
         'width': width,
         'height': height,
         'offset': video.currentTime,
