@@ -10,33 +10,33 @@ on:
       - Main
     types:
       - completed
+    branches:
+      - main
 
 jobs:
   on-success:
-
-    strategy:
-      matrix:
-        # TEST
-        # os: ['macos-latest', 'ubuntu-latest', 'windows-latest']
-        os: ['ubuntu-22.04']
-
-    runs-on: ${{ matrix.os }}
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    env:
+        python-version: '3.11'
+        os: 'ubuntu-22.04'
+
+    runs-on: ${{ os }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set Up Python ${{ matrix.python-version }}
+      - name: Set Up Python ${{ python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ python-version }}
 
       - name: Cache Python Dependencies
         uses: actions/cache@v4
         with:
           path: ${{ env.pythonLocation }}
-          key: ${{ runner.os }}-os:${{ matrix.os }}-python:${{ matrix.python-version }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-os:${{ os }}-python:${{ python-version }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('requirements.txt') }}
 
       - name: Install Python Dependencies
         shell: bash
