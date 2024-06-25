@@ -1,0 +1,65 @@
+name: "Build Latest Artifacts"
+
+# See: https://github.com/Nuitka/Nuitka?tab=readme-ov-file#use-case-7--building-with-github-workflows
+
+# TEST - limit to main
+
+on:
+  workflow_run:
+    workflows:
+      - Main
+    types:
+      - completed
+    branches:
+      - '*'
+
+jobs:
+  on-success:
+
+    strategy:
+      matrix:
+        # TEST
+        # os: ['macos-latest', 'ubuntu-latest', 'windows-latest']
+        os: ['ubuntu-22.04']
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set Up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache Python Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.pythonLocation }}
+          key: ${{ runner.os }}-os:${{ matrix.os }}-python:${{ matrix.python-version }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('requirements.txt') }}
+
+      - name: Install Python Dependencies
+        shell: bash
+        run: pip3 install -r requirements.txt -r requirements-dev.txt
+
+      - name: Build Executable with Nuitka
+        uses: Nuitka/Nuitka-Action@main
+        with:
+          nuitka-version: main
+          script-name: main.py
+          standalone: true
+          onefile: true
+          include-data-dir: |
+            ./static=static
+          include-data-files: |
+            ./pyproject.toml=./
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ runner.os }} Build
+          path: |
+              build/*.exe
+              build/*.bin
+              build/*.app/**/*

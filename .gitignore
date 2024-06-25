@@ -17,5 +17,6 @@ __pycache__/
 /.secrets
 /test/
 /out/
+/main.dist/
 
 /static/test-videos
