@@ -1,13 +1,38 @@
 import atexit
 import base64
+import logging
 import mimetypes
 import os
+import re
 import shutil
 import tempfile
 import uuid
 
+THIS_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+
+PACKAGE_CONFIG_PATH = os.path.join(THIS_DIR, 'pyproject.toml')
+UNKNOWN_VERSION = '?.?.?'
+VERSION_REGEX = r'^version\s*=\s*["\'](\d+\.\d+\.\d+)["\']$'
+
 def get_uuid():
     return str(uuid.uuid4())
+
+def get_version():
+    if (not os.path.isfile(PACKAGE_CONFIG_PATH)):
+        logging.error("Could not find version file: '%s'." % (PACKAGE_CONFIG_PATH))
+        return UNKNOWN_VERSION
+
+    with open(PACKAGE_CONFIG_PATH, 'r') as file:
+        for line in file:
+            line = line.strip()
+            if (line == ''):
+                continue
+
+            match = re.search(VERSION_REGEX, line)
+            if (match is not None):
+                return match.group(1)
+
+    return UNKNOWN_VERSION
 
 def get_temp_path(prefix = '', suffix = '', rm = True, mkdir = True):
     """
