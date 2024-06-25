@@ -4,7 +4,7 @@ requires = [
     "setuptools",
     "packaging>=21.3",
     "twine",
-    "vermin",
+    "vermin>=1.6.0",
 ]
 
 [project]
