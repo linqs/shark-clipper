@@ -10,8 +10,6 @@ on:
       - Main
     types:
       - completed
-    branches:
-      - 'deployment-testing'
 
 jobs:
   on-success:
