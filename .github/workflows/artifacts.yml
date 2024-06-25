@@ -2,6 +2,8 @@ name: "Build Latest Artifacts"
 
 # See: https://github.com/Nuitka/Nuitka?tab=readme-ov-file#use-case-7--building-with-github-workflows
 
+# Because of github limitations, this will only be triggered on the main branch.
+
 # TEST - limit to main
 
 on:
@@ -13,13 +15,13 @@ on:
     branches:
       - main
 
+env:
+    python-version: '3.11'
+    os: 'ubuntu-22.04'
+
 jobs:
   on-success:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-
-    env:
-        python-version: '3.11'
-        os: 'ubuntu-22.04'
 
     runs-on: ${{ os }}
 
