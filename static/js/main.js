@@ -241,7 +241,10 @@ function addScreenshot(screenshot) {
                             value='${time_input_value}' />
                 </div>
                 <div>
-                    <button onclick='flipImage("${screenshot.id}")'>Flip Image</button>
+                    <span>
+                        <button onclick='flipScreenshot("${screenshot.id}", axis="x")'>Vertical Flip</button>
+                        <button onclick='flipScreenshot("${screenshot.id}", axis="y")'>Horizontal Flip</button>
+                    </span>
                 </div>
             </div>
         </div>
@@ -250,8 +253,8 @@ function addScreenshot(screenshot) {
     document.querySelector('.screenshot-area').insertAdjacentHTML('beforeend', html);
 }
 
-// Flip an image in the screenshot area by adding it the the canvas flipped horizontally.
-function flipImage(screenshot_id) {
+// Flip a screenshot by adding it the the canvas flipped horizontally or vertically.
+function flipScreenshot(screenshot_id, axis='y') {
     // Find correct image, add to canvas to flip.
     let img = document.querySelector(`.screenshot[data-id="${screenshot_id}"] img`);
 
@@ -260,14 +263,31 @@ function flipImage(screenshot_id) {
     canvas.height = img.naturalHeight;
 
     let context = canvas.getContext('2d');
-    context.scale(-1, 1);
-    context.drawImage(img, -img.naturalWidth, 0);
 
-    // Draw the canvas to the image area.
-    img.src = canvas.toDataURL('image/jpeg');
+    // Horizontal flip.
+    if (axis === 'y') {
+        context.scale(-1, 1);
+        context.drawImage(img, -img.naturalWidth, 0);
 
-    // Update image metadata and store flipped image.
-    window.shark.screenshots[screenshot_id]['flipped'] = !Boolean(window.shark.screenshots[screenshot_id]['flipped']);
+        // Draw the canvas to the image area.
+        img.src = canvas.toDataURL('image/jpeg');
+
+        // Update image metadata.
+        window.shark.screenshots[screenshot_id]['flipped_horizontally'] = !Boolean(window.shark.screenshots[screenshot_id]['flipped_horizontally']);
+    }
+    
+    // Vertical flip.
+    if (axis === 'x') {
+        context.scale(1, -1);
+        context.drawImage(img, 0, -img.naturalHeight);
+
+        // Draw the canvas to the image area.
+        img.src = canvas.toDataURL('image/jpeg');
+
+        // Update image metadata.
+        window.shark.screenshots[screenshot_id]['flipped_vertically'] = !Boolean(window.shark.screenshots[screenshot_id]['flipped_vertically']);
+    }
+    
     window.shark.screenshots[screenshot_id]['dataURL'] = canvas.toDataURL('image/jpeg');
 }
 
@@ -360,7 +380,8 @@ function takeVideoScreenshot(query, xPercent, yPercent, widthPercent, heightPerc
         'time': time,
         'dataURL': takeScreenshot(video, x, y, width, height, format),
         'edited_name': false,
-        'flipped': false,
+        'flipped_horizontally': false,
+        'flipped_vertically': false,
     };
 }
 
