@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import sys
 
+import sharkclipper.util.file
 import sharkclipper.util.log
 import sharkclipper.util.rand
 
@@ -19,14 +20,23 @@ SHARK_TAG_NAME = 'shark-clipper'
 # Do not transcode (just copy) files with these formats.
 NO_TRANSCODE_WEB_CODECS = ['h264']
 
+def _get_path(name):
+    # First check the local (project) path.
+    path = os.path.join(sharkclipper.util.file.ROOT_DIR, name)
+    if (os.path.isfile(path)):
+        return path
+
+    # Fallback to the standard path search.
+    return shutil.which(name)
+
 def is_available(log_result = True):
-    if (shutil.which('ffmpeg') is None):
+    if (_get_path('ffmpeg') is None):
         if (log_result):
             logging.warn("Could not locate 'ffmpeg' executable.")
 
         return False
 
-    if (shutil.which('ffprobe') is None):
+    if (_get_path('ffprobe') is None):
         if (log_result):
             logging.warn("Could not locate 'ffprobe' executable.")
 
@@ -51,7 +61,7 @@ def get_video_codecs(metadata):
 # it will just be what ffprobe returns.
 def get_all_metadata(path):
     args = [
-        'ffprobe',
+        _get_path('ffprobe'),
         '-v', 'quiet',
         '-print_format', 'json',
         '-show_format',
@@ -128,7 +138,7 @@ def transcode_for_web(in_path, out_path, video_id):
 
 def _transcode_with_metadata(in_path, out_path, metadata):
     args = [
-        'ffmpeg',
+        _get_path('ffmpeg'),
         # Input file.
         '-i', in_path,
         # Override any existing output.
@@ -160,7 +170,7 @@ def _transcode_with_metadata(in_path, out_path, metadata):
 # Copy a file with new metadata,
 def copy_with_metadata(in_path, out_path, metadata):
     args = [
-        'ffmpeg',
+        _get_path('ffmpeg'),
         # Input file.
         '-i', in_path,
         # Override any existing output.
