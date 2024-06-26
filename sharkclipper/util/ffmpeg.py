@@ -12,7 +12,7 @@ import subprocess
 import sys
 
 import sharkclipper.util.log
-import sharkclipper.util.file
+import sharkclipper.util.rand
 
 SHARK_TAG_NAME = 'shark-clipper'
 
@@ -194,7 +194,7 @@ def main():
     args = _get_parser().parse_args()
     sharkclipper.util.log.init_from_args(args)
 
-    transcode_for_web(args.source, args.dest, sharkclipper.util.file.get_uuid())
+    transcode_for_web(args.source, args.dest, sharkclipper.util.rand.get_uuid())
 
     return 0
 

@@ -11,6 +11,8 @@ import PIL.Image
 
 import sharkclipper.util.ffmpeg
 import sharkclipper.util.file
+import sharkclipper.util.net
+import sharkclipper.util.version
 
 STATIC_DIR = os.path.join(sharkclipper.util.file.get_root_dir(), 'static')
 
@@ -53,7 +55,7 @@ def temp(handler, path, temp_dir = None, **kwargs):
 
 # Get the server version.
 def version(handler, path, **kwargs):
-    return sharkclipper.util.file.get_version(), None, None
+    return sharkclipper.util.version.get_version(), None, None
 
 # Prep a video for work, and get metadata about it.
 def video(handler, path,
@@ -94,7 +96,7 @@ def save(handler, path, temp_dir = None, data = None, out_dir = None, **kwargs):
     # Save screenshots.
     screenshots_metadata = []
     for screenshot in data.get('screenshots', {}).values():
-        image_bytes, extension = sharkclipper.util.file.data_url_to_bytes(screenshot['dataURL'])
+        image_bytes, extension = sharkclipper.util.net.data_url_to_bytes(screenshot['dataURL'])
         path = os.path.join(out_dir, screenshot['name'] + extension)
 
         metadata = {

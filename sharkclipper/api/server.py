@@ -7,6 +7,7 @@ import re
 
 import sharkclipper.api.handlers
 import sharkclipper.util.file
+import sharkclipper.util.rand
 
 DEFAULT_PORT = 12345
 ENCODING = 'utf-8'
@@ -87,7 +88,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if (length <= 0):
             return {}
 
-        video_id = sharkclipper.util.file.get_uuid()
+        video_id = sharkclipper.util.rand.get_uuid()
         temp_dir = os.path.join(Handler._temp_dir, 'raw', video_id)
         os.makedirs(temp_dir, exist_ok = True)
 

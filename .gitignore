@@ -17,5 +17,8 @@ __pycache__/
 /.secrets
 /test/
 /out/
-/*.dist/
+
+/*.dist
 /*.bin
+/*.build
+/*.onefile-build
