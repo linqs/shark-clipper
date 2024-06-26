@@ -9,10 +9,14 @@ import tempfile
 import uuid
 
 THIS_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+ROOT_DIR = os.path.abspath(os.path.join(THIS_DIR, '..', '..'))
 
-PACKAGE_CONFIG_PATH = os.path.join(THIS_DIR, 'pyproject.toml')
+PACKAGE_CONFIG_PATH = os.path.join(ROOT_DIR, 'pyproject.toml')
 UNKNOWN_VERSION = '?.?.?'
 VERSION_REGEX = r'^version\s*=\s*["\'](\d+\.\d+\.\d+)["\']$'
+
+def get_root_dir():
+    return ROOT_DIR
 
 def get_uuid():
     return str(uuid.uuid4())

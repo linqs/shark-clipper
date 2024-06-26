@@ -11,8 +11,8 @@ import shutil
 import subprocess
 import sys
 
-import log
-import util
+import sharkclipper.util.log
+import sharkclipper.util.file
 
 SHARK_TAG_NAME = 'shark-clipper'
 
@@ -192,9 +192,9 @@ def _run(args, name):
 
 def main():
     args = _get_parser().parse_args()
-    log.init_from_args(args)
+    sharkclipper.util.log.init_from_args(args)
 
-    transcode_for_web(args.source, args.dest, util.get_uuid())
+    transcode_for_web(args.source, args.dest, sharkclipper.util.file.get_uuid())
 
     return 0
 
@@ -209,7 +209,7 @@ def _get_parser():
         action = 'store', type = str,
         help = 'Destination file.')
 
-    log.set_cli_args(parser)
+    sharkclipper.util.log.set_cli_args(parser)
 
     return parser
 

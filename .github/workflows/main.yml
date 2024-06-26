@@ -35,7 +35,7 @@ jobs:
 
       - name: Check Python Version Compatibility
         shell: bash
-        run: vermin --no-tips --no-parse-comments --target=3.8- --violations *.py
+        run: vermin --no-tips --no-parse-comments --target=3.8- --violations sharkclipper
 
       # Create a release for this OS (but only on a single version of Python).
       # See: https://github.com/Nuitka/Nuitka?tab=readme-ov-file#use-case-7--building-with-github-workflows
@@ -45,13 +45,15 @@ jobs:
         uses: Nuitka/Nuitka-Action@main
         with:
           nuitka-version: main
-          script-name: main.py
+          script-name: sharkclipper/cli/server.py
           standalone: true
           onefile: true
           include-data-dir: |
             ./static=static
           include-data-files: |
             ./pyproject.toml=./
+          include-package: |
+            sharkclipper
 
       - name: Upload Artifacts
         if: matrix.python-version == '3.11'

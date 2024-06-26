@@ -5,10 +5,8 @@ import logging
 import os
 import re
 
-import handlers
-import util
-
-THIS_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+import sharkclipper.api.handlers
+import sharkclipper.util.file
 
 DEFAULT_PORT = 12345
 ENCODING = 'utf-8'
@@ -20,18 +18,18 @@ DEFAULT_OUT_DIRNAME = 'out'
 # Handler functions should take two arguments: the handler, the path.
 # (route regex, handler function, **kwarags)
 ROUTES = [
-    (r'^/$', handlers.redirect('/static/index.html')),
-    (r'^/index.html$', handlers.redirect('/static/index.html')),
-    (r'^/static$', handlers.redirect('/static/index.html')),
-    (r'^/static/$', handlers.redirect('/static/index.html')),
+    (r'^/$', sharkclipper.api.handlers.redirect('/static/index.html')),
+    (r'^/index.html$', sharkclipper.api.handlers.redirect('/static/index.html')),
+    (r'^/static$', sharkclipper.api.handlers.redirect('/static/index.html')),
+    (r'^/static/$', sharkclipper.api.handlers.redirect('/static/index.html')),
 
-    (r'^/favicon.ico$', handlers.redirect('/static/favicon.ico')),
+    (r'^/favicon.ico$', sharkclipper.api.handlers.redirect('/static/favicon.ico')),
 
-    (r'^/static/', handlers.static),
-    (r'^/temp/', handlers.temp),
-    (r'^/version$', handlers.version),
-    (r'^/video$', handlers.video),
-    (r'^/save$', handlers.save),
+    (r'^/static/', sharkclipper.api.handlers.static),
+    (r'^/temp/', sharkclipper.api.handlers.temp),
+    (r'^/version$', sharkclipper.api.handlers.version),
+    (r'^/video$', sharkclipper.api.handlers.video),
+    (r'^/save$', sharkclipper.api.handlers.save),
 ]
 
 class Handler(http.server.BaseHTTPRequestHandler):
@@ -40,7 +38,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
     @classmethod
     def init(cls, out_dir = DEFAULT_OUT_DIRNAME, cleanup_temp = True, **kwargs):
-        cls._temp_dir = util.get_temp_path(prefix = 'shark-clipper', rm = cleanup_temp)
+        cls._temp_dir = sharkclipper.util.file.get_temp_path(prefix = 'shark-clipper', rm = cleanup_temp)
         cls._out_dir = os.path.abspath(out_dir)
 
     def log_message(self, format, *args):
@@ -89,7 +87,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if (length <= 0):
             return {}
 
-        video_id = util.get_uuid()
+        video_id = sharkclipper.util.file.get_uuid()
         temp_dir = os.path.join(Handler._temp_dir, 'raw', video_id)
         os.makedirs(temp_dir, exist_ok = True)
 
@@ -147,7 +145,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def _route(self, path, **kwargs):
         path = path.strip()
 
-        target = handlers.not_found
+        target = sharkclipper.api.handlers.not_found
         for (regex, handler_func) in ROUTES:
             if (re.search(regex, path) is not None):
                 target = handler_func

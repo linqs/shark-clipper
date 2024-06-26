@@ -9,11 +9,10 @@ import os
 import PIL.ExifTags
 import PIL.Image
 
-import ffmpeg
-import util
+import sharkclipper.util.ffmpeg
+import sharkclipper.util.file
 
-THIS_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
-STATIC_DIR = os.path.join(THIS_DIR, 'static')
+STATIC_DIR = os.path.join(sharkclipper.util.file.get_root_dir(), 'static')
 
 METADATA_FILENAME_SUFFIX = '_metadata.json'
 
@@ -54,7 +53,7 @@ def temp(handler, path, temp_dir = None, **kwargs):
 
 # Get the server version.
 def version(handler, path, **kwargs):
-    return util.get_version(), None, None
+    return sharkclipper.util.file.get_version(), None, None
 
 # Prep a video for work, and get metadata about it.
 def video(handler, path,
@@ -66,7 +65,7 @@ def video(handler, path,
     os.makedirs(os.path.dirname(new_path), exist_ok = True)
 
     try:
-        new_path, key_metadata, all_metadata = ffmpeg.transcode_for_web(uploaded_path, new_path, video_id)
+        new_path, key_metadata, all_metadata = sharkclipper.util.ffmpeg.transcode_for_web(uploaded_path, new_path, video_id)
     except Exception as ex:
         message = "Failed to encode video '%s' for web." % (filename)
         logging.error(message, exc_info = ex)
@@ -95,7 +94,7 @@ def save(handler, path, temp_dir = None, data = None, out_dir = None, **kwargs):
     # Save screenshots.
     screenshots_metadata = []
     for screenshot in data.get('screenshots', {}).values():
-        image_bytes, extension = util.data_url_to_bytes(screenshot['dataURL'])
+        image_bytes, extension = sharkclipper.util.file.data_url_to_bytes(screenshot['dataURL'])
         path = os.path.join(out_dir, screenshot['name'] + extension)
 
         metadata = {
@@ -115,7 +114,7 @@ def save(handler, path, temp_dir = None, data = None, out_dir = None, **kwargs):
     video_metadata['screenshots'] = [metadata['image'] for metadata in screenshots_metadata]
     old_path = os.path.join(temp_dir, 'webencode', data['video']['id'] + '.mp4')
     new_path = os.path.join(out_dir, data['video']['name'] + '.mp4')
-    ffmpeg.copy_with_metadata(old_path, new_path, video_metadata)
+    sharkclipper.util.ffmpeg.copy_with_metadata(old_path, new_path, video_metadata)
 
     # Save all metadata.
     metadata = {

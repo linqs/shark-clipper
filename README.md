@@ -12,7 +12,10 @@ To run Shark Clipper you need:
 
 To run Shark Clipper, you first need to start with server:
 ```
-python3 main.py
+python3 -m sharkclipper.cli.server
+
+# OR
+./run.sh
 ```
 There are various options you can set for the server (use the `--help` flag to see them).
 
