@@ -423,8 +423,25 @@ function fetchVersion() {
         });
 }
 
+// Initialize hotkey functionality.
+function initializeHotkeys() {
+    document.addEventListener('keydown', (event) => {
+        if (event.code === 'KeyB') {
+            toggleSelection();
+        }
+        if (event.code === 'KeyF') {
+            captureFrame();
+        }
+        if (event.code === 'KeyS') {
+            save();
+        }
+        // Later add arrow keys for frame step in video.
+    });
+}
+
 function main() {
     fetchVersion();
+    initializeHotkeys();
     goToUploadScreen();
 }
 
