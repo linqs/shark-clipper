@@ -39,6 +39,7 @@ def _fetch_linux():
         out_path = os.path.join(ROOT_DIR, name)
 
         shutil.copy2(in_path, out_path)
+        os.chmod(out_path, 0o775)
 
     return 0
 
@@ -60,6 +61,7 @@ def _fetch_mac():
         out_path = os.path.join(ROOT_DIR, name)
 
         shutil.copy2(in_path, out_path)
+        os.chmod(out_path, 0o775)
 
     return 0
 
@@ -83,6 +85,7 @@ def _fetch_windows():
         out_path = os.path.join(ROOT_DIR, name)
 
         shutil.copy2(in_path, out_path)
+        os.chmod(out_path, 0o775)
 
     return 0
 
