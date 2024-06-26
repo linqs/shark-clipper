@@ -5,6 +5,8 @@ window.shark = window.shark || {};
 window.shark.info = window.shark.info || {};
 window.shark.screenshots = window.shark.screenshots || {};
 
+var screenshot_counter = 0;
+
 function goToLoadingScreen() {
     document.querySelector('.file-upload-screen').style.display = 'none';
     document.querySelector('.loading-screen').style.display = 'initial';
@@ -246,6 +248,9 @@ function addScreenshot(screenshot) {
                         <button onclick='flipScreenshot("${screenshot.id}", axis="y")'>Horizontal Flip</button>
                     </span>
                 </div>
+                <div>
+                    <button onclick='delete_screenshot("${screenshot.id}")'>Delete</button>
+                </div> 
             </div>
         </div>
     `;
@@ -358,7 +363,10 @@ function takeVideoScreenshot(query, xPercent, yPercent, widthPercent, heightPerc
 
     let id = randomHex();
 
-    let index_string = String(Object.keys(window.shark.screenshots).length).padStart(3, '0');
+    // Get screenshot counter value and update counter.
+    let index_string = String(screenshot_counter).padStart(3, '0');
+    screenshot_counter += 1;
+
     let name = window.shark.info['video'].name + "_" + index_string;
 
     let time = undefined;
@@ -394,6 +402,15 @@ function takeScreenshot(source, x, y, width, height, format = 'image/jpeg') {
     context.drawImage(source, x, y, width, height, 0, 0, width, height);
 
     return canvas.toDataURL(format);
+}
+
+// Delete a screenshot, it is no longer displayed or saved.
+function delete_screenshot(screenshot_id) {
+    // Find screenshot area to remove.
+    let screenshot_area = document.querySelector(`.screenshot[data-id="${screenshot_id}"]`);
+    screenshot_area.remove();
+    // Update screenshots metadata to remove flipped image.
+    delete window.shark.screenshots[screenshot_id];
 }
 
 // Inputs don't have a timezone aware type.
