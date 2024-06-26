@@ -27,3 +27,8 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/linqs/shark-clipper"
 Repository = "https://github.com/linqs/shark-clipper"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["sharkclipper"]
+namespaces = false

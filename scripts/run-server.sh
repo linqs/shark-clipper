@@ -1,12 +1,13 @@
 #!/bin/bash
 
 readonly THIS_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd | xargs realpath)"
+readonly ROOT_DIR="${THIS_DIR}/.."
 
 function main() {
     set -e
     trap exit SIGINT
 
-    cd "${THIS_DIR}"
+    cd "${ROOT_DIR}"
 
     python -m sharkclipper.cli.server $@
     return $?

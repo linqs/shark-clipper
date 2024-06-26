@@ -40,6 +40,11 @@ jobs:
       # Create a release for this OS (but only on a single version of Python).
       # See: https://github.com/Nuitka/Nuitka?tab=readme-ov-file#use-case-7--building-with-github-workflows
 
+      - name: Fetch FFmpeg
+        if: matrix.python-version == '3.11'
+        shell: bash
+        run: ./scripts/fetch-ffmpeg.py
+
       - name: Build ${{ runner.os }} Release Executable with Nuitka
         if: matrix.python-version == '3.11'
         uses: Nuitka/Nuitka-Action@main
@@ -52,6 +57,8 @@ jobs:
             ./static=static
           include-data-files: |
             ./pyproject.toml=./
+            ./ffmpeg=./
+            ./ffprobe=./
           include-package: |
             sharkclipper
 
