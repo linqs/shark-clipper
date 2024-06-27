@@ -53,7 +53,7 @@ jobs:
           script-name: sharkclipper/cli/server.py
           standalone: true
           onefile: true
-          output-file: 'shark-clipper-${{ runner.os }}-${{ RUNNER_ARCH }}'
+          output-file: 'shark-clipper-${{ runner.os }}-${{ runner.arch }}'
           include-data-dir: |
             ./static=static
           include-data-files: |
@@ -67,7 +67,7 @@ jobs:
         if: matrix.python-version == '3.11'
         uses: actions/upload-artifact@v4
         with:
-          name: 'shark-clipper-${{ runner.os }}-${{ RUNNER_ARCH }}'
+          name: 'shark-clipper-${{ runner.os }}-${{ runner.arch }}'
           compression-level: 0
           path: build/shark-clipper*
 
