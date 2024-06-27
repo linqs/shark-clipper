@@ -432,10 +432,7 @@ function initializeHotkeys() {
             captureFrame();
         } else if (event.code === 'KeyS') {
             save();
-        } else {
-            pass
-        }
-        // TODO Add arrow keys for frame step in video.
+        } 
     });
 }
 
