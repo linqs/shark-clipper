@@ -72,7 +72,7 @@ jobs:
               build/shark-clipper
               build/shark-clipper.exe
 
-      - name: Remove FFmpeg
+      - name: Cleanup
         if: matrix.python-version == '3.11'
         shell: bash
-        run: rm ffmpeg ffprobe
+        run: rm -rf ffmpeg ffprobe build
