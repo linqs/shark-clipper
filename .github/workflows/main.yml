@@ -107,6 +107,7 @@ jobs:
             sharkclipper
 
       - name: Set Windows Name
+        if: runner.os == 'Windows'
         shell: bash
         run: |
           mv "build/${{ steps.vars.outputs.bin_basename }}.bin.exe" "build/${{ steps.vars.outputs.bin_basename }}.exe"
