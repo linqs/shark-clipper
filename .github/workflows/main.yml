@@ -79,7 +79,6 @@ jobs:
           script-name: sharkclipper/cli/server.py
           standalone: true
           onefile: true
-          file-version: TEST
           output-file: 'shark-clipper-${{ steps.vars.outputs.bin_version }}.bin'
           include-data-dir: |
             ./static=static
