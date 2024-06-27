@@ -21,13 +21,17 @@ SHARK_TAG_NAME = 'shark-clipper'
 NO_TRANSCODE_WEB_CODECS = ['h264']
 
 def _get_path(name):
-    # First check the local (project) path.
+    # First, do a standard path search.
+    path = shutil.which(name)
+    if (path is not None):
+        return path
+
+    # Next, check the local (project) path.
     path = os.path.join(sharkclipper.util.file.ROOT_DIR, name)
     if (os.path.isfile(path)):
         return path
 
-    # Fallback to the standard path search.
-    return shutil.which(name)
+    return None
 
 def is_available(log_result = True):
     if (_get_path('ffmpeg') is None):
