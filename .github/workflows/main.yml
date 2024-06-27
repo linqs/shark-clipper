@@ -71,3 +71,8 @@ jobs:
               build/*.exe
               build/*.bin
               build/*.app/**/*
+
+      - name: Remove FFmpeg
+        if: matrix.python-version == '3.11'
+        shell: bash
+        run: rm ffmpeg ffprobe
