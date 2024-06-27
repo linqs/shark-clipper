@@ -6,20 +6,84 @@ Shark Clipper is a tool to take screenshots from a video while maintaining the m
 
 To run Shark Clipper you need:
  - [Python 3](https://www.python.org/downloads/)
- - [ffmpeg](https://ffmpeg.org/download.html)
+ - [FFmpeg](https://ffmpeg.org/download.html)
 
-## Usage
+## Installation / Setup
 
-To run Shark Clipper, you first need to start with server:
+### Using a Prebuilt Binary
+
+We provide prebuilt binaries for Shark Clipper that support various operating systems.
+All releases can be viewed on the [releases page](https://github.com/linqs/shark-clipper/releases).
+This document will assume that you are specifically using the [latest prebuilt releases](https://github.com/linqs/shark-clipper/releases/tag/latest-release).
+These "latest" builds are built automatically whenever new code is added.
+They have all the newest features, but are not guaranteed to be stable.
+
+Prebuilt binaries include all the required dependencies (like Python and FFmpeg).
+
+OS-specific instructions will be provided bellow,
+but here are the general steps for using a prebuilt binary.
+
+1) Go to the [latest prebuilt releases page](https://github.com/linqs/shark-clipper/releases/tag/latest-release)
+and download the file under "Assets" that best matches your machine.
+
+2) Set the correct permissions for your downloaded binary.
+Operating systems will do this differently,
+see below for os-specific instructions.
+
+3) Run the binary in a terminal.
+
+4) Navigate a web browser to the address indicated in the binary's output,
+and use the Shark Clipper as outlined in the [Usage section](#usage).
+The default address for the Shark Clipper is http://127.0.0.1:12345 .
+
+#### Using the Linux Prebuilt Binary
+
+You will need to set execute permissions on the Linux prebuilt binary, e.g.:
+```
+chmod +x shark-clipper-linux-x64-latest.bin
+```
+
+After that, you may run the binary as any normal program:
+```
+./shark-clipper-linux-x64-latest.bin
+```
+
+### From Source
+
+Follow these instructions to run Shark Clipper from source.
+
+1) Ensure that the above [requirements](#requirements) are installed.
+
+2) Get this repository.
+You can download the repo as a zip, but we will demonstrate getting it using git.
+```
+# Using SSH keys.
+git@github.com:linqs/shark-clipper.git
+
+# Using HTTPS (no authentication required).
+git clone https://github.com/linqs/shark-clipper.git
+```
+
+3) Install the project dependencies (and dev dependencies).
+```
+pip install -r requirements.txt -r requirements-dev.txt
+```
+
+4) Run the Shark Clipper server:
 ```
 python3 -m sharkclipper.cli.server
 
 # OR
 ./scripts/run-server.sh
 ```
-There are various options you can set for the server (use the `--help` flag to see them).
+Use the `--help` flag to see all the possible options.
 
-Next, open a web browser to the local address indicated by the server.
+5) If the server runs, then all your setup is complete.
+
+## Usage
+
+Once the Shark Clipper server is started (see the [Installation / Setup](#installation--setup) section),
+open a web browser to the local address indicated by the server.
 This is usually something like: [http://127.0.0.1:12345](http://127.0.0.1:12345).
 
 In the webpage, you can select a video to work on.
