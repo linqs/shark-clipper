@@ -50,11 +50,15 @@ After that, you may run the binary as any normal program:
 
 #### Using the Windows Prebuilt Binary
 
-Step 1: Double-Click the Windows prebuilt binary.
+Windows requires some additional security steps to run the prebuilt binary.
+The first of these steps needs to be done every time a new binary is downloaded,
+and the second step will need to be done every time you run the Shark Clipper server.
 
-Step 2: If the Windows Protected window pops up: Click "More Info" and then click "Run Anyway".
+1) Double-Click the Windows prebuilt binary.
 
-Step 3: If the Windows Security Alert window pops up: Check "Private Network", uncheck "Public Network", and then click "Allow Access".
+2) If the "Windows Protected" window pops up, click "More Info" at the bottom and then click "Run Anyway".
+
+3) If the "Windows Security Alert" window pops up, check "Private Network", uncheck "Public Network", and then click "Allow Access".
 
 ### From Source
 
