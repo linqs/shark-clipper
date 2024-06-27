@@ -270,8 +270,10 @@ function flipScreenshot(screenshot_id, flip_vertical) {
 
     if (flip_vertical) {
         direction = 'flipped_vertically';
-        scale_x = 1, scale_y = -1;
-        draw_x = 0, draw_y = -img.naturalHeight;
+        scale_x = 1;
+        scale_y = -1;
+        draw_x = 0;
+        draw_y = -img.naturalHeight;
     }
 
     let canvas = document.createElement('canvas');
@@ -397,9 +399,7 @@ function takeScreenshot(source, x, y, width, height, format = 'image/jpeg') {
 }
 
 function deleteScreenshot(screenshot_id) {
-    // Find screenshot area to remove.
     document.querySelector(`.screenshot[data-id="${screenshot_id}"]`).remove();
-    
     delete window.shark.screenshots[screenshot_id];
 }
 
