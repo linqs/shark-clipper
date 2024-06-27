@@ -8,6 +8,7 @@ import re
 import sharkclipper.api.handlers
 import sharkclipper.util.file
 import sharkclipper.util.rand
+import sharkclipper.util.version
 
 DEFAULT_PORT = 12345
 ENCODING = 'utf-8'
@@ -162,6 +163,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return str(ex), http.HTTPStatus.INTERNAL_SERVER_ERROR, None
 
 def run(port = DEFAULT_PORT, **kwargs):
+    logging.info("Starting Shark Clipper server version %s." % (sharkclipper.util.version.get_version()))
     logging.info("Serving on http://127.0.0.1:%d ." % (port))
 
     Handler.init(**kwargs)
