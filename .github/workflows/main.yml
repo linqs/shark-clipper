@@ -24,7 +24,7 @@ jobs:
         run: |
             sha_short=$(git rev-parse --short HEAD)
             echo "sha_short=${sha_short}" >> $GITHUB_OUTPUT
-            echo "bin_version=$("shark-clipper-${{ runner.os }}-${{ runner.arch }}-${sha_short}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+            echo "bin_version=$(echo "shark-clipper-${{ runner.os }}-${{ runner.arch }}-${sha_short}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
       # TEST
       - name: Test List
