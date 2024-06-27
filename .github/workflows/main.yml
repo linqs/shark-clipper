@@ -18,6 +18,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set Variables
+        id: vars
+        shell: bash
+        run: |
+            sha_short=$(git rev-parse --short HEAD)
+            echo "sha_short=${sha_short}" >> $GITHUB_OUTPUT
+            echo "bin_version=$("shark-clipper-${{ runner.os }}-${{ runner.arch }}-${sha_short}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
+      # TEST
+      - name: Test List
+        shell: bash
+        run: |
+          echo "SHA: ${{ steps.vars.outputs.sha_short }}"
+          echo "Version: ${{ steps.vars.outputs.bin_version }}"
+
       - name: Set Up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
@@ -53,7 +68,7 @@ jobs:
           script-name: sharkclipper/cli/server.py
           standalone: true
           onefile: true
-          output-file: 'shark-clipper-${{ runner.os }}-${{ runner.arch }}'
+          output-file: 'shark-clipper-${{ steps.vars.outputs.bin_version }}.bin'
           include-data-dir: |
             ./static=static
           include-data-files: |
@@ -63,13 +78,19 @@ jobs:
           include-package: |
             sharkclipper
 
+      - name: Set Windows Name
+        if: (matrix.python-version == '3.11') && (runner.os == 'Windows')
+        shell: bash
+        run: |
+          mv "build/shark-clipper-${{ steps.vars.outputs.bin_version }}.bin.exe" "build/shark-clipper-${{ steps.vars.outputs.bin_version }}.exe"
+
       - name: Upload Artifacts
         if: matrix.python-version == '3.11'
         uses: actions/upload-artifact@v4
         with:
-          name: 'shark-clipper-${{ runner.os }}-${{ runner.arch }}'
+          name: 'shark-clipper-${{ steps.vars.outputs.bin_version }}'
           compression-level: 0
-          path: build/shark-clipper*
+          path: build/shark-clipper-*
 
       - name: Release Latest
         if: matrix.python-version == '3.11'
@@ -77,7 +98,7 @@ jobs:
         with:
           tag_name: latest-release
           make_latest: true
-          files: build/shark-clipper*
+          files: build/shark-clipper-*
 
       - name: Cleanup
         if: matrix.python-version == '3.11'
