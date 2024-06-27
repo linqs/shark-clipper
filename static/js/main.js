@@ -4,7 +4,7 @@ window.shark = window.shark || {};
 
 window.shark.info = window.shark.info || {};
 window.shark.screenshots = window.shark.screenshots || {};
-window.shark.screenshot_counter = 0;
+window.shark.info['screenshot_counter'] = 0;
 
 function goToLoadingScreen() {
     document.querySelector('.file-upload-screen').style.display = 'none';
@@ -243,8 +243,8 @@ function addScreenshot(screenshot) {
                 </div>
                 <div>
                     <span>
-                        <button onclick='flipScreenshot("${screenshot.id}", "x")'>Vertical Flip</button>
-                        <button onclick='flipScreenshot("${screenshot.id}", "y")'>Horizontal Flip</button>
+                        <button onclick='flipScreenshot("${screenshot.id}", true)'>Vertical Flip</button>
+                        <button onclick='flipScreenshot("${screenshot.id}", false)'>Horizontal Flip</button>
                     </span>
                 </div>
                 <div>
@@ -258,30 +258,29 @@ function addScreenshot(screenshot) {
 }
 
 // Flip a screenshot by adding it the the canvas flipped horizontally or vertically.
-function flipScreenshot(screenshot_id, axis) {
-    // Find correct image, add to canvas to flip.
+function flipScreenshot(screenshot_id, flip_vertical) {
     let img = document.querySelector(`.screenshot[data-id="${screenshot_id}"] img`);
+
+    // Default values for horizontal flip;
+    let direction = 'flipped_horizontally';
+    let scale_x = -1;
+    let scale_y = 1;
+    let draw_x = -img.naturalWidth;
+    let draw_y = 0;
+
+    if (flip_vertical) {
+        direction = 'flipped_vertically';
+        scale_x = 1, scale_y = -1;
+        draw_x = 0, draw_y = -img.naturalHeight;
+    }
 
     let canvas = document.createElement('canvas');
     canvas.width = img.naturalWidth;
     canvas.height = img.naturalHeight;
 
     let context = canvas.getContext('2d');
-    
-    let direction = ''
-    if (axis === 'y') {
-        direction = 'flipped_horizontally';
-        context.scale(-1, 1);
-        context.drawImage(img, -img.naturalWidth, 0);
-    } else if (axis === 'x') {
-        direction = 'flipped_vertically';
-        context.scale(1, -1);
-        context.drawImage(img, 0, -img.naturalHeight);
-    } else {
-        throw("Invalid flip axis.")
-    }
-
-    // Draw the canvas to the image area.
+    context.scale(scale_x, scale_y);
+    context.drawImage(img, draw_x, draw_y);
     img.src = canvas.toDataURL('image/jpeg');
 
     // Update image metadata.
@@ -357,8 +356,8 @@ function takeVideoScreenshot(query, xPercent, yPercent, widthPercent, heightPerc
     let id = randomHex();
 
     // Get screenshot counter value and update counter.
-    let index_string = String(window.shark.screenshot_counter).padStart(3, '0');
-    window.shark.screenshot_counter ++;
+    let index_string = String(window.shark.info['screenshot_counter']).padStart(3, '0');
+    window.shark.info['screenshot_counter']++;
 
     let name = window.shark.info['video'].name + "_" + index_string;
 
@@ -399,9 +398,8 @@ function takeScreenshot(source, x, y, width, height, format = 'image/jpeg') {
 
 function deleteScreenshot(screenshot_id) {
     // Find screenshot area to remove.
-    let screenshot_area = document.querySelector(`.screenshot[data-id="${screenshot_id}"]`);
-    screenshot_area.remove();
-
+    document.querySelector(`.screenshot[data-id="${screenshot_id}"]`).remove();
+    
     delete window.shark.screenshots[screenshot_id];
 }
 
