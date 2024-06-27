@@ -63,21 +63,14 @@ jobs:
           include-package: |
             sharkclipper
 
-      # TEST
-      - name: 'List Output'
-        if: matrix.python-version == '3.11'
-        shell: bash
-        run: ls build
-
       - name: Upload Artifacts
         if: matrix.python-version == '3.11'
         uses: actions/upload-artifact@v3
         with:
           name: ${{ runner.os }} Build
           path: |
-              build/*.exe
-              build/*.bin
-              build/*.app/**/*
+              build/shark-clipper
+              build/shark-clipper.exe
 
       - name: Remove FFmpeg
         if: matrix.python-version == '3.11'
