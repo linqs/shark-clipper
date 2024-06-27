@@ -423,8 +423,22 @@ function fetchVersion() {
         });
 }
 
+// Initialize hotkey functionality.
+function initializeHotkeys() {
+    document.addEventListener('keydown', (event) => {
+        if (event.code === 'KeyB') {
+            toggleSelection();
+        } else if (event.code === 'KeyF') {
+            captureFrame();
+        } else if (event.code === 'KeyS') {
+            save();
+        } 
+    });
+}
+
 function main() {
     fetchVersion();
+    initializeHotkeys();
     goToUploadScreen();
 }
 
