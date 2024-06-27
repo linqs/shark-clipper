@@ -428,14 +428,14 @@ function initializeHotkeys() {
     document.addEventListener('keydown', (event) => {
         if (event.code === 'KeyB') {
             toggleSelection();
-        }
-        if (event.code === 'KeyF') {
+        } else if (event.code === 'KeyF') {
             captureFrame();
-        }
-        if (event.code === 'KeyS') {
+        } else if (event.code === 'KeyS') {
             save();
+        } else {
+            pass
         }
-        // Later add arrow keys for frame step in video.
+        // TODO Add arrow keys for frame step in video.
     });
 }
 
