@@ -254,7 +254,7 @@ function addScreenshot(screenshot) {
         </div>
     `;
 
-    document.querySelector('.screenshot-area').insertAdjacentHTML('beforeend', html);
+    document.querySelector('.screenshot-area').insertAdjacentHTML('afterbegin', html);
 }
 
 // Flip a screenshot by adding it the the canvas flipped horizontally or vertically.
