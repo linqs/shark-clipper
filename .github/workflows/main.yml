@@ -1,110 +1,129 @@
 name: Main
 
 on:
-  - push
-  - pull_request
+    - push
+    - pull_request
 
 jobs:
-  main:
+    test:
+        strategy:
+            matrix:
+                python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+                os: ['ubuntu-22.04', 'macos-12', 'windows-2022']
 
-    strategy:
-      matrix:
-        python-version: ['3.11']
-        os: ['ubuntu-22.04', 'macos-12', 'windows-2022']
+        runs-on: ${{ matrix.os }}
 
-    runs-on: ${{ matrix.os }}
+        steps:
+            - name: Checkout
+                uses: actions/checkout@v4
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+            - name: Set Up Python ${{ matrix.python-version }}
+                uses: actions/setup-python@v5
+                with:
+                    python-version: ${{ matrix.python-version }}
 
-      - name: Set Variables
-        id: vars
-        shell: bash
-        run: |
-            sha_short=$(git rev-parse --short HEAD)
-            base_version=$(grep version pyproject.toml | sed 's/^.*"\(.*\)"$/\1/')
-            bin_version=$(echo "${{ runner.os }}-${{ runner.arch }}-latest" | tr '[:upper:]' '[:lower:]')
-            echo "sha_short=${sha_short}" >> $GITHUB_OUTPUT
-            echo "base_version=${base_version}" >> $GITHUB_OUTPUT
-            echo "full_version=${base_version}-${sha_short}" >> $GITHUB_OUTPUT
-            echo "bin_version=${bin_version}" >> $GITHUB_OUTPUT
-            echo "bin_basename=shark-clipper-${bin_version}" >> $GITHUB_OUTPUT
+            - name: Cache Python Dependencies
+                uses: actions/cache@v4
+                with:
+                    path: ${{ env.pythonLocation }}
+                    key: ${{ runner.os }}-os:${{ matrix.os }}-python:${{ matrix.python-version }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('requirements.txt') }}
 
-      - name: Write Version Override File
-        shell: bash
-        run: |
-          echo "${{ steps.vars.outputs.full_version }}" > VERSION.txt
+            - name: Install Python Dependencies
+                shell: bash
+                run: pip3 install -r requirements.txt -r requirements-dev.txt
 
-      - name: Set Up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
+            - name: Check Python Version Compatibility
+                shell: bash
+                run: vermin --no-tips --no-parse-comments --target=3.8- --violations sharkclipper
 
-      - name: Cache Python Dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.pythonLocation }}
-          key: ${{ runner.os }}-os:${{ matrix.os }}-python:${{ matrix.python-version }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('requirements.txt') }}
+    deploy:
+        if: github.ref == 'refs/heads/main'
 
-      - name: Install Python Dependencies
-        shell: bash
-        run: pip3 install -r requirements.txt -r requirements-dev.txt
+        strategy:
+            matrix:
+                python-version: ['3.11']
+                os: ['ubuntu-22.04', 'macos-12', 'windows-2022']
 
-      - name: Check Python Version Compatibility
-        shell: bash
-        run: vermin --no-tips --no-parse-comments --target=3.8- --violations sharkclipper
+        runs-on: ${{ matrix.os }}
 
-      # Create a release for this OS (but only on a single version of Python).
-      # See: https://github.com/Nuitka/Nuitka?tab=readme-ov-file#use-case-7--building-with-github-workflows
+        steps:
+            - name: Checkout
+                uses: actions/checkout@v4
 
-      - name: Fetch FFmpeg
-        if: matrix.python-version == '3.11'
-        shell: bash
-        run: ./scripts/fetch-ffmpeg.py
+            - name: Set Variables
+                id: vars
+                shell: bash
+                run: |
+                        sha_short=$(git rev-parse --short HEAD)
+                        base_version=$(grep version pyproject.toml | sed 's/^.*"\(.*\)"$/\1/')
+                        bin_version=$(echo "${{ runner.os }}-${{ runner.arch }}-latest" | tr '[:upper:]' '[:lower:]')
+                        echo "sha_short=${sha_short}" >> $GITHUB_OUTPUT
+                        echo "base_version=${base_version}" >> $GITHUB_OUTPUT
+                        echo "full_version=${base_version}-${sha_short}" >> $GITHUB_OUTPUT
+                        echo "bin_version=${bin_version}" >> $GITHUB_OUTPUT
+                        echo "bin_basename=shark-clipper-${bin_version}" >> $GITHUB_OUTPUT
 
-      - name: Build ${{ runner.os }} Release Executable with Nuitka
-        if: matrix.python-version == '3.11'
-        uses: Nuitka/Nuitka-Action@main
-        with:
-          nuitka-version: main
-          script-name: sharkclipper/cli/server.py
-          standalone: true
-          onefile: true
-          output-file: '${{ steps.vars.outputs.bin_basename }}.bin'
-          include-data-dir: |
-            ./static=static
-          include-data-files: |
-            ./pyproject.toml=./
-            ./VERSION.txt=./
-            ./ffmpeg=./
-            ./ffprobe=./
-          include-package: |
-            sharkclipper
+            - name: Write Version Override File
+                shell: bash
+                run: |
+                    echo "${{ steps.vars.outputs.full_version }}" > VERSION.txt
 
-      - name: Set Windows Name
-        if: (matrix.python-version == '3.11') && (runner.os == 'Windows')
-        shell: bash
-        run: |
-          mv "build/${{ steps.vars.outputs.bin_basename }}.bin.exe" "build/${{ steps.vars.outputs.bin_basename }}.exe"
+            - name: Set Up Python ${{ matrix.python-version }}
+                uses: actions/setup-python@v5
+                with:
+                    python-version: ${{ matrix.python-version }}
 
-      - name: Upload Artifacts
-        if: matrix.python-version == '3.11'
-        uses: actions/upload-artifact@v4
-        with:
-          name: '${{ steps.vars.outputs.bin_basename }}'
-          compression-level: 0
-          path: build/shark-clipper-*
+            - name: Cache Python Dependencies
+                uses: actions/cache@v4
+                with:
+                    path: ${{ env.pythonLocation }}
+                    key: ${{ runner.os }}-os:${{ matrix.os }}-python:${{ matrix.python-version }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('requirements.txt') }}
 
-      - name: Release Latest
-        if: matrix.python-version == '3.11'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: latest-release
-          make_latest: true
-          files: build/shark-clipper-*
+            - name: Install Python Dependencies
+                shell: bash
+                run: pip3 install -r requirements.txt -r requirements-dev.txt
 
-      - name: Cleanup
-        if: matrix.python-version == '3.11'
-        shell: bash
-        run: rm -rf ffmpeg ffprobe build
+            - name: Fetch FFmpeg
+                shell: bash
+                run: ./scripts/fetch-ffmpeg.py
+
+            - name: Build ${{ runner.os }} Release Executable with Nuitka
+                uses: Nuitka/Nuitka-Action@main
+                with:
+                    nuitka-version: main
+                    script-name: sharkclipper/cli/server.py
+                    standalone: true
+                    onefile: true
+                    output-file: '${{ steps.vars.outputs.bin_basename }}.bin'
+                    include-data-dir: |
+                        ./static=static
+                    include-data-files: |
+                        ./pyproject.toml=./
+                        ./VERSION.txt=./
+                        ./ffmpeg=./
+                        ./ffprobe=./
+                    include-package: |
+                        sharkclipper
+
+            - name: Set Windows Name
+                shell: bash
+                run: |
+                    mv "build/${{ steps.vars.outputs.bin_basename }}.bin.exe" "build/${{ steps.vars.outputs.bin_basename }}.exe"
+
+            - name: Upload Artifacts
+                uses: actions/upload-artifact@v4
+                with:
+                    name: '${{ steps.vars.outputs.bin_basename }}'
+                    compression-level: 0
+                    path: build/shark-clipper-*
+
+            - name: Release Latest
+                uses: softprops/action-gh-release@v2
+                with:
+                    tag_name: latest-release
+                    make_latest: true
+                    files: build/shark-clipper-*
+
+            - name: Cleanup
+                shell: bash
+                run: rm -rf ffmpeg ffprobe build
