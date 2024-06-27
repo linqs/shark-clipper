@@ -38,6 +38,7 @@ jobs:
 
   deploy:
     if: github.ref == 'refs/heads/main'
+    needs: test
 
     strategy:
       matrix:
