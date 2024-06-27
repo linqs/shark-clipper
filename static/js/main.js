@@ -248,7 +248,7 @@ function addScreenshot(screenshot) {
                     </span>
                 </div>
                 <div>
-                    <button onclick='deleteScreenshot("${screenshot.id}")'>Delete</button>
+                    <button onclick='deleteScreenshot("${screenshot.id}")'>Delete (d)</button>
                 </div> 
             </div>
         </div>
@@ -398,7 +398,11 @@ function takeScreenshot(source, x, y, width, height, format = 'image/jpeg') {
     return canvas.toDataURL(format);
 }
 
-function deleteScreenshot(screenshot_id) {
+function deleteScreenshot(screenshot_id=null) {
+    // If no id is given, delete most recent screenshot.
+    if (screenshot_id == null) {
+        screenshot_id = document.querySelector('.screenshot-area .screenshot').getAttribute('data-id');
+    }
     document.querySelector(`.screenshot[data-id="${screenshot_id}"]`).remove();
     delete window.shark.screenshots[screenshot_id];
 }
@@ -460,6 +464,8 @@ function initializeHotkeys() {
             captureFrame();
         } else if (event.code === 'KeyS') {
             save();
+        } else if (event.code === 'KeyD') {
+            deleteScreenshot();
         } 
     });
 }
