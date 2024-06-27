@@ -35,6 +35,17 @@ def get_version():
 
     return UNKNOWN_VERSION
 
+def set_cli_args(parser):
+    """
+    Set common version args in an argparse parser.
+    """
+
+    parser.add_argument('--version',
+        action = 'version', version = get_version(),
+        help = 'Output the Shark Clipper version and exit.')
+
+    return parser
+
 def main():
     args = _get_parser().parse_args()
     sharkclipper.util.log.init_from_args(args)

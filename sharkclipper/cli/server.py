@@ -6,6 +6,7 @@ import sys
 import sharkclipper.api.server
 import sharkclipper.util.log
 import sharkclipper.util.ffmpeg
+import sharkclipper.util.version
 
 def check_requirements():
     result = True
@@ -43,6 +44,7 @@ def _get_parser():
         help = 'Do not cleanup any intermitent results (good for debugging) (default: %(default)s).')
 
     sharkclipper.util.log.set_cli_args(parser)
+    sharkclipper.util.version.set_cli_args(parser)
 
     return parser
 
