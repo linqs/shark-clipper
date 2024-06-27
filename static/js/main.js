@@ -4,6 +4,7 @@ window.shark = window.shark || {};
 
 window.shark.info = window.shark.info || {};
 window.shark.screenshots = window.shark.screenshots || {};
+window.shark.info['screenshot_counter'] = 0;
 
 function goToLoadingScreen() {
     document.querySelector('.file-upload-screen').style.display = 'none';
@@ -241,8 +242,14 @@ function addScreenshot(screenshot) {
                             value='${time_input_value}' />
                 </div>
                 <div>
-                    <button onclick='flipImage("${screenshot.id}")'>Flip Image</button>
+                    <span>
+                        <button onclick='flipScreenshot("${screenshot.id}", true)'>Vertical Flip</button>
+                        <button onclick='flipScreenshot("${screenshot.id}", false)'>Horizontal Flip</button>
+                    </span>
                 </div>
+                <div>
+                    <button onclick='deleteScreenshot("${screenshot.id}")'>Delete</button>
+                </div> 
             </div>
         </div>
     `;
@@ -250,24 +257,36 @@ function addScreenshot(screenshot) {
     document.querySelector('.screenshot-area').insertAdjacentHTML('beforeend', html);
 }
 
-// Flip an image in the screenshot area by adding it the the canvas flipped horizontally.
-function flipImage(screenshot_id) {
-    // Find correct image, add to canvas to flip.
+// Flip a screenshot by adding it the the canvas flipped horizontally or vertically.
+function flipScreenshot(screenshot_id, flip_vertical) {
     let img = document.querySelector(`.screenshot[data-id="${screenshot_id}"] img`);
+
+    // Default values for horizontal flip;
+    let direction = 'flipped_horizontally';
+    let scale_x = -1;
+    let scale_y = 1;
+    let draw_x = -img.naturalWidth;
+    let draw_y = 0;
+
+    if (flip_vertical) {
+        direction = 'flipped_vertically';
+        scale_x = 1;
+        scale_y = -1;
+        draw_x = 0;
+        draw_y = -img.naturalHeight;
+    }
 
     let canvas = document.createElement('canvas');
     canvas.width = img.naturalWidth;
     canvas.height = img.naturalHeight;
 
     let context = canvas.getContext('2d');
-    context.scale(-1, 1);
-    context.drawImage(img, -img.naturalWidth, 0);
-
-    // Draw the canvas to the image area.
+    context.scale(scale_x, scale_y);
+    context.drawImage(img, draw_x, draw_y);
     img.src = canvas.toDataURL('image/jpeg');
 
-    // Update image metadata and store flipped image.
-    window.shark.screenshots[screenshot_id]['flipped'] = !Boolean(window.shark.screenshots[screenshot_id]['flipped']);
+    // Update image metadata.
+    window.shark.screenshots[screenshot_id][direction] = !Boolean(window.shark.screenshots[screenshot_id][direction]);
     window.shark.screenshots[screenshot_id]['dataURL'] = canvas.toDataURL('image/jpeg');
 }
 
@@ -338,7 +357,10 @@ function takeVideoScreenshot(query, xPercent, yPercent, widthPercent, heightPerc
 
     let id = randomHex();
 
-    let index_string = String(Object.keys(window.shark.screenshots).length).padStart(3, '0');
+    // Get screenshot counter value and update counter.
+    let index_string = String(window.shark.info['screenshot_counter']).padStart(3, '0');
+    window.shark.info['screenshot_counter']++;
+
     let name = window.shark.info['video'].name + "_" + index_string;
 
     let time = undefined;
@@ -360,7 +382,8 @@ function takeVideoScreenshot(query, xPercent, yPercent, widthPercent, heightPerc
         'time': time,
         'dataURL': takeScreenshot(video, x, y, width, height, format),
         'edited_name': false,
-        'flipped': false,
+        'flipped_horizontally': false,
+        'flipped_vertically': false,
     };
 }
 
@@ -373,6 +396,11 @@ function takeScreenshot(source, x, y, width, height, format = 'image/jpeg') {
     context.drawImage(source, x, y, width, height, 0, 0, width, height);
 
     return canvas.toDataURL(format);
+}
+
+function deleteScreenshot(screenshot_id) {
+    document.querySelector(`.screenshot[data-id="${screenshot_id}"]`).remove();
+    delete window.shark.screenshots[screenshot_id];
 }
 
 // Inputs don't have a timezone aware type.
@@ -423,8 +451,22 @@ function fetchVersion() {
         });
 }
 
+// Initialize hotkey functionality.
+function initializeHotkeys() {
+    document.addEventListener('keydown', (event) => {
+        if (event.code === 'KeyB') {
+            toggleSelection();
+        } else if (event.code === 'KeyF') {
+            captureFrame();
+        } else if (event.code === 'KeyS') {
+            save();
+        } 
+    });
+}
+
 function main() {
     fetchVersion();
+    initializeHotkeys();
     goToUploadScreen();
 }
 
