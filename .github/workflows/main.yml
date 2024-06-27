@@ -24,25 +24,17 @@ jobs:
         run: |
             sha_short=$(git rev-parse --short HEAD)
             base_version=$(grep version pyproject.toml | sed 's/^.*"\(.*\)"$/\1/')
+            bin_version=$(echo "${{ runner.os }}-${{ runner.arch }}-latest" | tr '[:upper:]' '[:lower:]')
             echo "sha_short=${sha_short}" >> $GITHUB_OUTPUT
             echo "base_version=${base_version}" >> $GITHUB_OUTPUT
             echo "full_version=${base_version}-${sha_short}" >> $GITHUB_OUTPUT
-            echo "bin_version=$(echo "shark-clipper-${{ runner.os }}-${{ runner.arch }}-latest" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+            echo "bin_version=${bin_version}" >> $GITHUB_OUTPUT
+            echo "bin_basename=shark-clipper-${bin_version}" >> $GITHUB_OUTPUT
 
       - name: Write Version File
         shell: bash
         run: |
           echo "${{ steps.vars.outputs.full_version }}" > VERSION.txt
-
-      # TEST
-      - name: Test List
-        shell: bash
-        run: |
-          echo "SHA: ${{ steps.vars.outputs.sha_short }}"
-          echo "Base Version: ${{ steps.vars.outputs.base_version }}"
-          echo "Full Version: ${{ steps.vars.outputs.full_version }}"
-          echo "Bin Version: ${{ steps.vars.outputs.bin_version }}"
-          cat VERSION.txt
 
       - name: Set Up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -79,7 +71,7 @@ jobs:
           script-name: sharkclipper/cli/server.py
           standalone: true
           onefile: true
-          output-file: 'shark-clipper-${{ steps.vars.outputs.bin_version }}.bin'
+          output-file: '${{ steps.vars.outputs.bin_basename }}.bin'
           include-data-dir: |
             ./static=static
           include-data-files: |
@@ -94,13 +86,13 @@ jobs:
         if: (matrix.python-version == '3.11') && (runner.os == 'Windows')
         shell: bash
         run: |
-          mv "build/shark-clipper-${{ steps.vars.outputs.bin_version }}.bin.exe" "build/shark-clipper-${{ steps.vars.outputs.bin_version }}.exe"
+          mv "build/${{ steps.vars.outputs.bin_basename }}.bin.exe" "build/${{ steps.vars.outputs.bin_basename }}.exe"
 
       - name: Upload Artifacts
         if: matrix.python-version == '3.11'
         uses: actions/upload-artifact@v4
         with:
-          name: 'shark-clipper-${{ steps.vars.outputs.bin_version }}'
+          name: '${{ steps.vars.outputs.bin_basename }}'
           compression-level: 0
           path: build/shark-clipper-*
 
