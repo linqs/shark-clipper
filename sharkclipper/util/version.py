@@ -8,10 +8,17 @@ import sharkclipper.util.file
 import sharkclipper.util.log
 
 PACKAGE_CONFIG_PATH = os.path.join(sharkclipper.util.file.ROOT_DIR, 'pyproject.toml')
+OVERRIDE_VERSION_PATH = os.path.join(sharkclipper.util.file.ROOT_DIR, 'VERSION.txt')
 UNKNOWN_VERSION = '?.?.?'
 VERSION_REGEX = r'^version\s*=\s*["\'](\d+\.\d+\.\d+)["\']$'
 
 def get_version():
+    # First, check for the version override file.
+    if (os.path.isfile(OVERRIDE_VERSION_PATH)):
+        with open(OVERRIDE_VERSION_PATH, 'r') as file:
+            return file.read().strip()
+
+    # Next, check for the base version in the project config.
     if (not os.path.isfile(PACKAGE_CONFIG_PATH)):
         logging.error("Could not find version file: '%s'." % (PACKAGE_CONFIG_PATH))
         return UNKNOWN_VERSION
@@ -37,7 +44,7 @@ def main():
     return 0
 
 def _get_parser():
-    parser = argparse.ArgumentParser(description = "Get the sverer's version.")
+    parser = argparse.ArgumentParser(description = "Get the server's version.")
     sharkclipper.util.log.set_cli_args(parser)
     return parser
 

@@ -24,5 +24,7 @@ __pycache__/
 /*.onefile-build
 /shark-clipper*
 
+/VERSION.txt
+
 /ffmpeg
 /ffprobe

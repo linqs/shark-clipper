@@ -31,7 +31,7 @@ jobs:
             echo "bin_version=${bin_version}" >> $GITHUB_OUTPUT
             echo "bin_basename=shark-clipper-${bin_version}" >> $GITHUB_OUTPUT
 
-      - name: Write Version File
+      - name: Write Version Override File
         shell: bash
         run: |
           echo "${{ steps.vars.outputs.full_version }}" > VERSION.txt
