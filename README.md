@@ -48,6 +48,14 @@ After that, you may run the binary as any normal program:
 ./shark-clipper-linux-x64-latest.bin
 ```
 
+#### Using the Windows Prebuilt Binary
+
+Step 1: Double-Click the Windows prebuilt binary.
+
+Step 2: If the Windows Protected window pops up: Click "More Info" and then click "Run Anyway".
+
+Step 3: If the Windows Security Alert window pops up: Check "Private Network", uncheck "Public Network", and then click "Allow Access".
+
 ### From Source
 
 Follow these instructions to run Shark Clipper from source.
