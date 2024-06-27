@@ -53,7 +53,7 @@ jobs:
           script-name: sharkclipper/cli/server.py
           standalone: true
           onefile: true
-          output-filename: 'shark-clipper'
+          output-file: 'shark-clipper'
           include-data-dir: |
             ./static=static
           include-data-files: |
@@ -67,7 +67,7 @@ jobs:
       - name: 'List Output'
         if: matrix.python-version == '3.11'
         shell: bash
-        run: ls
+        run: ls build
 
       - name: Upload Artifacts
         if: matrix.python-version == '3.11'
