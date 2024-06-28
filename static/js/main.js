@@ -398,11 +398,12 @@ function takeScreenshot(source, x, y, width, height, format = 'image/jpeg') {
     return canvas.toDataURL(format);
 }
 
-function deleteScreenshot(screenshot_id=null) {
+function deleteScreenshot(screenshot_id = null) {
     // If no id is given, delete most recent screenshot.
     if (screenshot_id == null) {
         screenshot_id = document.querySelector('.screenshot-area .screenshot').getAttribute('data-id');
     }
+    
     document.querySelector(`.screenshot[data-id="${screenshot_id}"]`).remove();
     delete window.shark.screenshots[screenshot_id];
 }
