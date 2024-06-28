@@ -5,6 +5,7 @@ import json
 import logging
 import mimetypes
 import os
+import shutil
 
 import PIL.ExifTags
 import PIL.Image
@@ -91,7 +92,10 @@ def save(handler, path, temp_dir = None, data = None, out_dir = None, **kwargs):
     # Out directory name is video name plus prefix of id.
     id_prefix = data['video']['id'].split('-')[0]
     out_dir = os.path.join(out_dir, data['video']['name'] + '-' + id_prefix)
-    os.makedirs(out_dir, exist_ok = True)
+    # If directory already exists, remake to avoid conflicts.
+    if os.path.exists(out_dir):
+        shutil.rmtree(out_dir)
+    os.makedirs(out_dir)
 
     # Save screenshots.
     screenshots_metadata = []
