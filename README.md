@@ -48,36 +48,35 @@ After that, you may run the binary as any normal program:
 ./shark-clipper-linux-x64-latest.bin
 ```
 #### Using the Mac Prebuilt Binary
-You will need to set execute permissions on the Mac prebuilt binary, e.g.:
+
+Mac requires a additional security steps to run the prebuilt binary.
+These steps need to be done every time a new binary is downloaded and run for the first time.
+
+1) Set execute permissions on the Mac prebuilt binary, e.g.:
 ```
 chmod +x shark-clipper-macos-x64-latest.bin
 ```
 
-Mac requires an additional security step to run the prebuilt binary.
-This step needs to be done every time a new binary is downloaded and run for the first time.
-
-1) Run the binary as any normal program:
+2) Run the binary as any normal program:
 ```
 ./shark-clipper-macos-x64-latest.bin
 ```
 
-2) A popup may appear noting that the file cannot be opened because Apple cannot chcck it for malicious software, click "OK" to close.
+3) Click "OK" on a popup that may appear saying that the file cannot be opened because Apple cannot check it for malicious software.
 
-3) Open System Settings and navigate to the "Privacy & Security" tab. 
+4) Open System Settings and navigate to the "Privacy & Security" tab.
 
-4) Scroll down until arriving at the "Security" section where a message should appear stating that shark-clipper.bin was blocked because it is not from an identified developer. Click the "Allow Anyway" button. You may be required to provide a password.
+5) Scroll down to the "Security" section;
+a message should appear stating that shark-clipper-macos-x64-latest.bin was blocked because it is not from an identified developer.
+Click the "Allow Anyway" button.
+You may be required to provide a password.
 
-5) Return to the terminal and re-run the binary:
+6) Return to the terminal and re-run the binary:
 ```
 ./shark-clipper-macos-x64-latest.bin
 ```
 
-6) A popup may appear again warning about running the file. This time click the "Open" button. To program should now proceed.
-
-After following these steps when first running a new binary, you will be able to run the binary as any normal program without warnings:
-```
-./shark-clipper-macos-x64-latest.bin
-```
+7) Click "Open" on a popup that may appear again warning about running the file.
 
 #### Using the Windows Prebuilt Binary
 
