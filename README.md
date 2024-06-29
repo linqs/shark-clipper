@@ -53,13 +53,17 @@ After that, you may run the binary as any normal program:
 Mac requires additional security steps to run the prebuilt binary.
 These steps need to be done every time a new binary is downloaded and run for the first time.
 Running binary files is best done via the command line.
-This [command line primer](https://developer.apple.com/library/archive/documentation/OpenSource/Conceptual/ShellScriptingCommandLInePrimer/CommandLine.html)
+
+This [command line primer](https://gomakethings.com/navigating-the-file-system-with-terminal/)
 includes instructions on running files and navigating directories.
 
 1) Open the Finder application and locate the shark-clipper-macos-x64-latest.zip file.
 Double click the file to unzip it, a second file, shark-clipper-macos-x64-latest.bin should appear.
 
-2) Open the Terminal application and navigate to the directory where shark-clipper-macos-x64-latest.bin is located.
+2) Open the Terminal application and navigate to the directory where shark-clipper-macos-x64-latest.bin is located e.g. if the file is in the "Downloads" folder:
+```
+cd ~/Downloads
+```
 
 3) Set execute permissions on the Mac prebuilt binary, e.g.:
 ```
