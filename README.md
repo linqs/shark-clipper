@@ -57,6 +57,8 @@ Running binary files is best done via the command line.
 This [command line primer](https://gomakethings.com/navigating-the-file-system-with-terminal/)
 includes instructions on running files and navigating directories.
 
+For a more comprehensive command line guide refer to MIT's [Missing Semester course](https://missing.csail.mit.edu/2020/course-shell/).
+
 1) Open the Finder application and locate the shark-clipper-macos-x64-latest.zip file.
 Double click the file to unzip it, a second file, shark-clipper-macos-x64-latest.bin should appear.
 
