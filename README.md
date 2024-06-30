@@ -59,8 +59,7 @@ includes instructions on running files and navigating directories.
 
 For a more comprehensive command line guide refer to MIT's [Missing Semester course](https://missing.csail.mit.edu/2020/course-shell/).
 
-1) Open the Finder application and locate the shark-clipper-macos-x64-latest.zip file.
-Double click the file to unzip it, a second file, shark-clipper-macos-x64-latest.bin should appear.
+1) Unzip the downloaded shark-clipper-macos-x64-latest.zip file.
 
 2) Open the Terminal application and navigate to the directory where shark-clipper-macos-x64-latest.bin is located e.g. if the file is in the "Downloads" folder:
 ```
