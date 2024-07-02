@@ -161,7 +161,6 @@ function initVideo(info) {
                 <input type='text' name='name'
                         data-video-id='${info.video_id}'
                         onchange='editVideo(this, "name")'
-                        onkeydown='event.stopPropagation()'
                         value='${info.original_name}' />
             </div>
             <div>
@@ -169,7 +168,6 @@ function initVideo(info) {
                 <input type='datetime-local' name='start_time'
                         data-video-id='${info.video_id}'
                         onchange='editVideo(this, "start_time")'
-                        onkeydown='event.stopPropagation()'
                         value='${start_time_input_value}' />
             </div>
             <div>
@@ -177,7 +175,6 @@ function initVideo(info) {
                 <input type='number' name='latitude' step='0.01'
                         data-video-id='${info.video_id}'
                         onchange='editVideo(this, "latitude")'
-                        onkeydown='event.stopPropagation()'
                         value='${latitude}' />
             </div>
             <div>
@@ -185,11 +182,12 @@ function initVideo(info) {
                 <input type='number' name='longitude' step='0.01'
                         data-video-id='${info.video_id}'
                         onchange='editVideo(this, "longitude")'
-                        onkeydown='event.stopPropagation()'
                         value='${longitude}' />
             </div>
         </div>
     `;
+
+    removeKeydownSideEffects();
 }
 
 function toggleSelection() {
@@ -238,7 +236,6 @@ function addScreenshot(screenshot) {
                     <label for='name'>Name:</label>
                     <input type='text' name='name'
                             onchange='editScreenshot(this, "${screenshot.id}", "name")'
-                            onkeydown='event.stopPropagation()'
                             value='${screenshot.name}' />
                 </div>
                 <div>
@@ -258,6 +255,8 @@ function addScreenshot(screenshot) {
             </div>
         </div>
     `;
+
+    removeKeydownSideEffects();
 
     document.querySelector('.screenshot-area').insertAdjacentHTML('afterbegin', html);
 }
@@ -469,9 +468,16 @@ function initializeHotkeys() {
     });
 }
 
+function removeKeydownSideEffects() {
+    document.querySelectorAll('input[type="text"]').forEach((input) => {
+        input.setAttribute('onkeydown', 'event.stopPropagation()');
+    });
+}
+
 function main() {
     fetchVersion();
     initializeHotkeys();
+    removeKeydownSideEffects();
     goToUploadScreen();
 }
 
