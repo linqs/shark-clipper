@@ -297,7 +297,6 @@ function flipScreenshot(screenshot_id, flip_vertical) {
 
 // Edit the global video record (which may change screenshots).
 function editVideo(element, field) {
-    console.log("Edit video");
     if (field === 'name') {
         window.shark.info['video']['name'] = element.value;
 
@@ -345,7 +344,6 @@ function editVideo(element, field) {
 
 // Edit the global screenshot record.
 function editScreenshot(element, id, field) {
-    console.log("Edit screenshot");
     window.shark.screenshots[id][field] = element.value;
 
     if (field === 'name') {
