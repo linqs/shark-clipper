@@ -136,6 +136,14 @@ function initVideo(info) {
     let video_location = metadata.location ?? {};
     let latitude = video_location.latitude ?? undefined;
     let longitude = video_location.longitude ?? undefined;
+    
+    // Remove leading "+"
+    if (latitude != undefined) {
+        latitude = latitude.replace('+', '');
+    }
+    if (longitude != undefined) {
+        longitude = longitude.replace('+', '');
+    }
 
     window.shark.info['video'] = {
         id: info.video_id,
