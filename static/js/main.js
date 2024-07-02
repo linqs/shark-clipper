@@ -161,6 +161,7 @@ function initVideo(info) {
                 <input type='text' name='name'
                         data-video-id='${info.video_id}'
                         onchange='editVideo(this, "name")'
+                        onkeydown='event.stopPropagation()'
                         value='${info.original_name}' />
             </div>
             <div>
@@ -168,6 +169,7 @@ function initVideo(info) {
                 <input type='datetime-local' name='start_time'
                         data-video-id='${info.video_id}'
                         onchange='editVideo(this, "start_time")'
+                        onkeydown='event.stopPropagation()'
                         value='${start_time_input_value}' />
             </div>
             <div>
@@ -175,6 +177,7 @@ function initVideo(info) {
                 <input type='number' name='latitude' step='0.01'
                         data-video-id='${info.video_id}'
                         onchange='editVideo(this, "latitude")'
+                        onkeydown='event.stopPropagation()'
                         value='${latitude}' />
             </div>
             <div>
@@ -182,6 +185,7 @@ function initVideo(info) {
                 <input type='number' name='longitude' step='0.01'
                         data-video-id='${info.video_id}'
                         onchange='editVideo(this, "longitude")'
+                        onkeydown='event.stopPropagation()'
                         value='${longitude}' />
             </div>
         </div>
@@ -234,6 +238,7 @@ function addScreenshot(screenshot) {
                     <label for='name'>Name:</label>
                     <input type='text' name='name'
                             onchange='editScreenshot(this, "${screenshot.id}", "name")'
+                            onkeydown='event.stopPropagation()'
                             value='${screenshot.name}' />
                 </div>
                 <div>
@@ -292,6 +297,7 @@ function flipScreenshot(screenshot_id, flip_vertical) {
 
 // Edit the global video record (which may change screenshots).
 function editVideo(element, field) {
+    console.log("Edit video");
     if (field === 'name') {
         window.shark.info['video']['name'] = element.value;
 
@@ -339,6 +345,7 @@ function editVideo(element, field) {
 
 // Edit the global screenshot record.
 function editScreenshot(element, id, field) {
+    console.log("Edit screenshot");
     window.shark.screenshots[id][field] = element.value;
 
     if (field === 'name') {
