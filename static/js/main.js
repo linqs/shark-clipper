@@ -138,10 +138,10 @@ function initVideo(info) {
     let longitude = video_location.longitude ?? undefined;
     
     // Remove leading "+"
-    if (latitude != undefined) {
+    if (latitude !== undefined) {
         latitude = latitude.replace('+', '');
     }
-    if (longitude != undefined) {
+    if (longitude !== undefined) {
         longitude = longitude.replace('+', '');
     }
 
