@@ -426,8 +426,8 @@ function convertCoordinatesForInput(coordinates) {
         return undefined;
     }
 
-    // Remove leading "+" from coordinates.
-    return coordinates.replace('+', '');
+    // Remove the leading + from coordinates.
+    return coordinates.replace(/^\+/, '');
 }
 
 // Fetch the server's version and add it to the page's title.
