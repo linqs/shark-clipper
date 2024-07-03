@@ -188,6 +188,8 @@ function initVideo(info) {
             </div>
         </div>
     `;
+
+    removeHotkeysOnText();
 }
 
 function toggleSelection() {
@@ -257,6 +259,8 @@ function addScreenshot(screenshot) {
     `;
 
     document.querySelector('.screenshot-area').insertAdjacentHTML('afterbegin', html);
+
+    removeHotkeysOnText();
 }
 
 // Flip a screenshot by adding it the the canvas flipped horizontally or vertically.
@@ -472,6 +476,14 @@ function initializeHotkeys() {
         } else if (event.code === 'KeyS') {
             save();
         } 
+    });
+
+    removeHotkeysOnText();
+}
+
+function removeHotkeysOnText() {
+    document.querySelectorAll('input[type="text"]').forEach((input) => {
+        input.setAttribute('onkeydown', 'event.stopPropagation()');
     });
 }
 
