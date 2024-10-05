@@ -135,14 +135,16 @@ function initVideo(info) {
 
     let video_location = metadata.location ?? {};
     let latitude = video_location.latitude ?? undefined;
+    let latitude_input_value = convertCoordinatesForInput(latitude);
     let longitude = video_location.longitude ?? undefined;
+    let longitude_input_value = convertCoordinatesForInput(longitude);
 
     window.shark.info['video'] = {
         id: info.video_id,
         name: name,
         start_time: start_time,
-        latitude: latitude,
-        longitude: longitude,
+        latitude: latitude_input_value,
+        longitude: longitude_input_value,
     };
 
     window.shark.info['key_metadata'] = info.key_metadata;
@@ -175,17 +177,19 @@ function initVideo(info) {
                 <input type='number' name='latitude' step='0.01'
                         data-video-id='${info.video_id}'
                         onchange='editVideo(this, "latitude")'
-                        value='${latitude}' />
+                        value='${latitude_input_value}' />
             </div>
             <div>
                 <label for='longitude'>Longitude:</label>
                 <input type='number' name='longitude' step='0.01'
                         data-video-id='${info.video_id}'
                         onchange='editVideo(this, "longitude")'
-                        value='${longitude}' />
+                        value='${longitude_input_value}' />
             </div>
         </div>
     `;
+
+    removeHotkeysOnText();
 }
 
 function toggleSelection() {
@@ -254,7 +258,9 @@ function addScreenshot(screenshot) {
         </div>
     `;
 
-    document.querySelector('.screenshot-area').insertAdjacentHTML('beforeend', html);
+    document.querySelector('.screenshot-area').insertAdjacentHTML('afterbegin', html);
+
+    removeHotkeysOnText();
 }
 
 // Flip a screenshot by adding it the the canvas flipped horizontally or vertically.
@@ -419,6 +425,15 @@ function convertUnixSecsForInput(unixSeconds) {
     return offsetDate.toISOString().slice(0, 19);
 }
 
+function convertCoordinatesForInput(coordinates) {
+    if (!coordinates) {
+        return undefined;
+    }
+
+    // Remove the leading + from coordinates.
+    return coordinates.replace(/^\+/, '');
+}
+
 // Fetch the server's version and add it to the page's title.
 function fetchVersion() {
     let promise = fetch('/version', {
@@ -461,6 +476,14 @@ function initializeHotkeys() {
         } else if (event.code === 'KeyS') {
             save();
         } 
+    });
+
+    removeHotkeysOnText();
+}
+
+function removeHotkeysOnText() {
+    document.querySelectorAll('input[type="text"]').forEach((input) => {
+        input.setAttribute('onkeydown', 'event.stopPropagation()');
     });
 }
 

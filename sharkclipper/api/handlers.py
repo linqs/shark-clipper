@@ -91,6 +91,11 @@ def save(handler, path, temp_dir = None, data = None, out_dir = None, **kwargs):
     # Out directory name is video name plus prefix of id.
     id_prefix = data['video']['id'].split('-')[0]
     out_dir = os.path.join(out_dir, data['video']['name'] + '-' + id_prefix)
+
+    # If directory already exists, remake to avoid conflicts.
+    if (os.path.exists(out_dir)):
+        sharkclipper.util.file.remove_dirent(out_dir)
+
     os.makedirs(out_dir, exist_ok = True)
 
     # Save screenshots.
