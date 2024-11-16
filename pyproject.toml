@@ -9,7 +9,7 @@ requires = [
 
 [project]
 name = "shark-clipper"
-version = "0.0.1"
+version = "0.1.0"
 description = "A tool for getting clips of shark fins from full videos."
 readme = "README.md"
 requires-python = ">=3.8"
