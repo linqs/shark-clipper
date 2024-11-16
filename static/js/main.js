@@ -159,10 +159,10 @@ function initVideo(info) {
 }
 
 function toggleSelection() {
-    if (document.querySelector(`.video-container .selection`)) {
-        removeSelectionBox('.video-container');
+    if (document.querySelector(`.video-wrap .selection`)) {
+        removeSelectionBox('.video-wrap');
     } else {
-        makeSelectionBox('.video-container');
+        makeSelectionBox('.video-wrap');
     }
 }
 
@@ -173,7 +173,7 @@ function captureFrame() {
     let xPercent = 0.0;
     let yPercent = 0.0;
 
-    let selection = document.querySelector('.video-container .selection');
+    let selection = document.querySelector('.video-wrap .selection');
 
     if (selection) {
         let selectionBounding = selection.getBoundingClientRect();
@@ -185,7 +185,7 @@ function captureFrame() {
         yPercent = (selectionBounding.y - parentBounding.y) / parentBounding.height;
     }
 
-    let screenshot = takeVideoScreenshot('.video-container video', xPercent, yPercent, widthPercent, heightPercent);
+    let screenshot = takeVideoScreenshot('.main-video', xPercent, yPercent, widthPercent, heightPercent);
 
     addScreenshot(screenshot);
 }

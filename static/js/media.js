@@ -2,7 +2,7 @@
 
 // Initialize the video controls and block until the video is ready.
 function initVideoControls() {
-    let video = document.querySelector('.video-container video');
+    let video = document.querySelector('.main-video');
     video.load();
 
     // Register a handler for updating as we progress through the video.
@@ -24,7 +24,7 @@ function initVideoControls() {
     }
 
     // Set play/pause icons.
-    let playPauseButton = document.querySelector('.video-container .video-controls .play-pause');
+    let playPauseButton = document.querySelector('.video-controls .play-pause');
     video.addEventListener("play", function(event) {
         playPauseButton.innerHTML = '⏸';
     });
@@ -35,14 +35,14 @@ function initVideoControls() {
 
 // Call when the video's metadata is loaded.
 function setEndTime() {
-    let video = document.querySelector('.video-container video');
+    let video = document.querySelector('.main-video');
 
     let duration = video.duration;
     if (isNaN(duration)) {
         return;
     }
 
-    let progress = document.querySelector('.video-container .video-controls progress');
+    let progress = document.querySelector('.video-controls progress');
 
     // Check if we have already set the duration.
     if (progress.getAttribute("max")) {
@@ -56,8 +56,8 @@ function setEndTime() {
 // Set the visual elements for the current time.
 // Does not seek.
 function setCurrentTime(secs) {
-    let video = document.querySelector('.video-container video');
-    let currentTimeInput = document.querySelector('.video-container .video-controls .current-time');
+    let video = document.querySelector('.main-video');
+    let currentTimeInput = document.querySelector('.video-controls .current-time');
 
     // The duration (video metadata) may not be loaded yet,
     var maxTime = video.duration;
@@ -76,18 +76,18 @@ function setCurrentTime(secs) {
     currentTimeInput.value = formatTimeString(secs);
 
     // Update the progress bar.
-    document.querySelector('.video-container .video-controls progress').value = secs;
+    document.querySelector('.video-controls progress').value = secs;
 }
 
 function videoSeekOffset(offset) {
-    let video = document.querySelector('.video-container video');
+    let video = document.querySelector('.main-video');
 
     let newTime = video.currentTime + offset;
     videoSeek(newTime);
 }
 
 function videoSeekProgress(element, event) {
-    let video = document.querySelector('.video-container video');
+    let video = document.querySelector('.main-video');
     if (isNaN(video.duration)) {
         return;
     }
@@ -107,7 +107,7 @@ function videoSeek(value) {
         return;
     }
 
-    let video = document.querySelector('.video-container video');
+    let video = document.querySelector('.main-video');
 
     value = Math.max(0, Math.min(video.duration, value))
     video.currentTime = value;
@@ -116,7 +116,7 @@ function videoSeek(value) {
 }
 
 function videoTogglePlay() {
-    let video = document.querySelector('.video-container video');
+    let video = document.querySelector('.main-video');
 
     if (video.paused || video.ended) {
         video.play();
@@ -136,9 +136,9 @@ function setClip(value, isStart) {
 
     let element = null;
     if (isStart) {
-        element = document.querySelector('.video-container .video-controls .clip-start');
+        element = document.querySelector('.video-controls .clip-start');
     } else {
-        element = document.querySelector('.video-container .video-controls .clip-end');
+        element = document.querySelector('.video-controls .clip-end');
     }
 
     element.value = formatTimeString(value);

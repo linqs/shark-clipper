@@ -5,21 +5,23 @@ function createVideoAreaHTML(videoInfo, path, type, latitude_input_value, longit
 
     return `
         <div class='video-container media-area media-area-background'>
-            <video preload='auto' muted>
-                <source src='${path}' type='${type}' />
-            </video>
+            <div class='video-wrap'>
+                <video class='main-video' preload='auto' muted>
+                    <source src='${path}' type='${type}' />
+                </video>
+            </div>
             <div class='video-controls'>
-                <div class='vido-controls-row video-controls-progress'>
+                <div class='video-controls-row video-controls-progress'>
                     <progress value='0.0' min='0.0' onclick='videoSeekProgress(this, event)'></progress>
                 </div>
-                <div class='vido-controls-row video-controls-seek'>
+                <div class='video-controls-row video-controls-seek'>
                     <button class='skip-far-back' onclick='videoSeekOffset(-5.0)'>↺</button>
                     <button class='skip-back' onclick='videoSeekOffset(-0.5)'>↶</button>
                     <button class='play-pause' onclick='videoTogglePlay()'>⏵</button>
                     <button class='skip-far-back' onclick='videoSeekOffset(0.5)'>↷</button>
                     <button class='skip-far-back' onclick='videoSeekOffset(5.0)'>↻</button>
                 </div>
-                <div class='vido-controls-row video-controls-clip'>
+                <div class='video-controls-row video-controls-clip'>
                     <input type='text' class='clip-start' onchange='setClip(this, true)' />
                     <input type='text' class='current-time' onchange='videoSeek(this)' />
                     <input type='text' class='clip-end' onchange='setClip(this, false)' />
