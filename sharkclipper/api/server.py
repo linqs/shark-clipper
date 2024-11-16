@@ -107,10 +107,12 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def _do_request(self, **kwargs):
         logging.debug("Serving: " + self.path)
 
+        range_header = self.headers.get('Range', None)
+
         code = http.HTTPStatus.OK
         headers = {}
 
-        result = self._route(self.path, **kwargs)
+        result = self._route(self.path, range_header = range_header, **kwargs)
         if (result is None):
             # All handling was done internally, the response is complete.
             return
