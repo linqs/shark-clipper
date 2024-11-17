@@ -3,9 +3,9 @@
 window.shark = window.shark ?? {};
 window.shark.media = window.shark.media ?? {};
 
-// TODO - Make seek durations constants: short seek, long seek.
-
-// TODO - Keyboard shortcuts: left, right, shift+left, shift+right, home, end.
+const SEEK_OFFSET_LONG_SECS = 5.0;
+const SEEK_OFFSET_SHORT_SECS = 0.5;
+const SEEK_OFFSET_VERY_SHORT_SECS = 0.05;
 
 // Initialize the video controls and block until the video is ready.
 function initVideoControls() {
@@ -86,12 +86,16 @@ function videoSeekOffset(offset) {
     videoSeek(newTime);
 }
 
-function videoSeekProportional(element) {
+function videoSeekProportional(value) {
     if (!_has_duration()) {
         return;
     }
 
-    videoSeek(_get_duration() * element.value);
+    if ((typeof value) !== 'number') {
+        value = value.value;
+    }
+
+    videoSeek(_get_duration() * value);
 }
 
 function videoSeekBoundingClick(element, event) {

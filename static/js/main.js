@@ -154,7 +154,7 @@ function initVideo(info) {
     let videoContainer = document.querySelector('.work-screen .video-area');
     videoContainer.innerHTML = createVideoAreaHTML(videoInfo, info.path, info.type, latitude_input_value, longitude_input_value);
 
-    removeHotkeysOnText();
+    removeHotkeysOnInputs();
 
     initVideoControls();
 }
@@ -197,7 +197,7 @@ function addScreenshot(screenshot) {
     let html = createScreenshotHTML(screenshot);
     document.querySelector('.screenshot-area').insertAdjacentHTML('afterbegin', html);
 
-    removeHotkeysOnText();
+    removeHotkeysOnInputs();
 }
 
 // Flip a screenshot by adding it the the canvas flipped horizontally or vertically.
@@ -403,23 +403,53 @@ function fetchVersion() {
         });
 }
 
-// Initialize hotkey functionality.
+// Initialize hotkeys.
 function initializeHotkeys() {
     document.addEventListener('keydown', (event) => {
         if (event.code === 'KeyB') {
+            // B -- Make a selection box;
             toggleSelection();
         } else if (event.code === 'KeyF') {
+            // F -- Take a screenshot.
             captureFrame();
         } else if (event.code === 'KeyS') {
+            // S -- Save.
             save();
+        } else if (event.code === 'Space') {
+            // Space -- Play/Pause.
+            videoTogglePlay();
+        } else if (['ArrowLeft', 'ArrowRight'].includes(event.code)) {
+            // Left/Right Arrow -- Seek back/forward.
+
+            let seekDirection = 1.0;
+            if (event.code === 'ArrowLeft') {
+                seekDirection = -1.0;
+            }
+
+            // The seek length depends on modifiers: none (long), shift (short), ctrl, (very short).
+            let seekLength = SEEK_OFFSET_LONG_SECS;
+            if (event.shiftKey) {
+                seekLength = SEEK_OFFSET_SHORT_SECS;
+            } else if (event.ctrlKey) {
+                seekLength = SEEK_OFFSET_VERY_SHORT_SECS;
+            }
+
+            videoSeekOffset(seekDirection * seekLength);
+        } else if (event.code === 'Home') {
+            // Home -- Seek to the beginning.
+            videoSeekProportional(0);
+        } else if (event.code === 'End') {
+            // End -- Seek to the end.
+            videoSeekProportional(1);
         }
     });
 
-    removeHotkeysOnText();
+    removeHotkeysOnInputs();
 }
 
-function removeHotkeysOnText() {
-    document.querySelectorAll('input[type="text"]').forEach((input) => {
+// Remove key listeners on input tags.
+function removeHotkeysOnInputs() {
+    document.querySelectorAll('input').forEach((input) => {
         input.setAttribute('onkeydown', 'event.stopPropagation()');
     });
 }
