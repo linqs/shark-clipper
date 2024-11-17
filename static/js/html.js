@@ -12,7 +12,20 @@ function createVideoAreaHTML(videoInfo, path, type, latitude_input_value, longit
             </div>
             <div class='video-controls'>
                 <div class='video-controls-row video-controls-progress'>
-                    <progress value='0.0' min='0.0' onclick='videoSeekProgress(this, event)'></progress>
+                    <input type='range'
+                            class='progress-bar'
+                            value='0.0' min='0.0' max='1.0' step='0.01'
+                            onchange='videoSeekProportional(this)' />
+                    <div class='clip-highlight-container'>
+                        <div class='clip-highlight'></div>
+                    </div>
+                </div>
+                <div class='video-controls-row video-controls-clip'>
+                    <button class='clip-start-now' onclick='setClipNow(true)'>Clip Start</button>
+                    <input type='text' class='clip-start' onchange='setClipAbsolute(this, true)' value='-' />
+                    <input type='text' class='current-time' onchange='videoSeek(this)' value='-' />
+                    <input type='text' class='clip-end' onchange='setClipAbsolute(this, false)' value='-' />
+                    <button class='clip-end-now' onclick='setClipNow(false)'>Clip End</button>
                 </div>
                 <div class='video-controls-row video-controls-seek'>
                     <button class='skip-far-back' onclick='videoSeekOffset(-5.0)'>↺</button>
@@ -20,11 +33,6 @@ function createVideoAreaHTML(videoInfo, path, type, latitude_input_value, longit
                     <button class='play-pause' onclick='videoTogglePlay()'>⏵</button>
                     <button class='skip-far-back' onclick='videoSeekOffset(0.5)'>↷</button>
                     <button class='skip-far-back' onclick='videoSeekOffset(5.0)'>↻</button>
-                </div>
-                <div class='video-controls-row video-controls-clip'>
-                    <input type='text' class='clip-start' onchange='setClip(this, true)' />
-                    <input type='text' class='current-time' onchange='videoSeek(this)' />
-                    <input type='text' class='clip-end' onchange='setClip(this, false)' />
                 </div>
             </div>
         </div>

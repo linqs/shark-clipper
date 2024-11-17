@@ -1,5 +1,10 @@
 'use strict';
 
+window.shark = window.shark || {};
+window.shark.media = window.shark.media || {};
+
+// TODO - Relative font size for icons and inputs.
+
 // Initialize the video controls and block until the video is ready.
 function initVideoControls() {
     let video = document.querySelector('.main-video');
@@ -10,16 +15,12 @@ function initVideoControls() {
         setCurrentTime(video.currentTime);
     });
 
-    // Set initial values for times.
-    setCurrentTime(0);
-    setClip(0, true);
-
     // Some browsers (often mobile) may not have the duration ready yet.
     if (!isNaN(video.duration)) {
-        setEndTime();
+        metadataLoaded();
     } else {
         video.addEventListener('loadedmetadata', function(event) {
-            setEndTime();
+            metadataLoaded();
         });
     }
 
@@ -34,49 +35,47 @@ function initVideoControls() {
 }
 
 // Call when the video's metadata is loaded.
-function setEndTime() {
-    let video = document.querySelector('.main-video');
+function metadataLoaded() {
+    if (_has_duration()) {
+        // Metadata has already been registered.
+        return;
+    }
 
+    let video = document.querySelector('.main-video');
     let duration = video.duration;
     if (isNaN(duration)) {
+        // Metadata has not been recieved from the server.
         return;
     }
 
-    let progress = document.querySelector('.video-controls progress');
+    _set_duration(duration);
+    setClipAbsolute(duration, false);
 
-    // Check if we have already set the duration.
-    if (progress.getAttribute("max")) {
-        return;
-    }
-
-    setClip(duration, false);
-    progress.setAttribute('max', duration);
+    // Set initial values for times.
+    setCurrentTime(0);
+    setClipAbsolute(0, true);
+    setClipAbsolute(duration, false);
 }
 
 // Set the visual elements for the current time.
 // Does not seek.
 function setCurrentTime(secs) {
-    let video = document.querySelector('.main-video');
-    let currentTimeInput = document.querySelector('.video-controls .current-time');
+    // The duration (video metadata) load may not have triggered the event yet.
+    metadataLoaded();
 
-    // The duration (video metadata) may not be loaded yet,
-    var maxTime = video.duration;
-    if (isNaN(maxTime)) {
-        maxTime = Infinity;
-    } else {
-        // Try to set the end time if we have duration information.
-        setEndTime();
-    }
-
-    secs = Math.max(0, Math.min(maxTime, secs));
-
-    currentTimeInput.value = formatTimeString(secs);
+    // Bound the time.
+    secs = _bound_video_time(secs);
 
     // Replace the seek input with the correctly formatted time.
-    currentTimeInput.value = formatTimeString(secs);
+    document.querySelector('.video-controls .current-time').value = formatTimeString(secs);
 
     // Update the progress bar.
-    document.querySelector('.video-controls progress').value = secs;
+    let proportion = 0.0;
+    if (_has_duration()) {
+        proportion = secs / _get_duration();
+    }
+
+    document.querySelector('.video-controls .progress-bar').value = proportion;
 }
 
 function videoSeekOffset(offset) {
@@ -86,16 +85,23 @@ function videoSeekOffset(offset) {
     videoSeek(newTime);
 }
 
-function videoSeekProgress(element, event) {
-    let video = document.querySelector('.main-video');
-    if (isNaN(video.duration)) {
+function videoSeekProportional(element) {
+    if (!_has_duration()) {
+        return;
+    }
+
+    videoSeek(_get_duration() * element.value);
+}
+
+function videoSeekBoundingClick(element, event) {
+    if (!_has_duration()) {
         return;
     }
 
     let boundingBox = element.getBoundingClientRect();
     let proportion = (event.x - boundingBox.x) / boundingBox.width;
 
-    videoSeek(video.duration * proportion);
+    videoSeek(_get_duration() * proportion);
 }
 
 function videoSeek(value) {
@@ -107,11 +113,9 @@ function videoSeek(value) {
         return;
     }
 
-    let video = document.querySelector('.main-video');
+    value = _bound_video_time(value);
 
-    value = Math.max(0, Math.min(video.duration, value))
-    video.currentTime = value;
-
+    document.querySelector('.main-video').currentTime = value;
     setCurrentTime(value);
 }
 
@@ -125,23 +129,82 @@ function videoTogglePlay() {
     }
 }
 
-function setClip(value, isStart) {
+function setClipNow(isStart) {
+    if (!_has_duration) {
+        return;
+    }
+
+    let video = document.querySelector('.main-video');
+    setClipAbsolute(video.currentTime, isStart);
+}
+
+function setClipProportional(value, isStart) {
+    if (!_has_duration) {
+        return;
+    }
+
     if ((typeof value) !== 'number') {
-        value = validateTimeString(event.value);
+        value = validateTimeString(value.value);
+    }
+
+    setClipAbsolute(value * _get_duration, isStart);
+}
+
+function setClipAbsolute(value, isStart) {
+    if (!_has_duration) {
+        return;
+    }
+
+    if ((typeof value) !== 'number') {
+        value = validateTimeString(value.value);
     }
 
     if (value === undefined) {
         return;
     }
 
-    let element = null;
+    let start = window.shark.media['clip-start'] ?? 0;
+    let end = window.shark.media['clip-end'] ?? _get_duration();
+
     if (isStart) {
-        element = document.querySelector('.video-controls .clip-start');
+        start = value;
     } else {
-        element = document.querySelector('.video-controls .clip-end');
+        end = value;
     }
 
-    element.value = formatTimeString(value);
+    // Correct ordering if a user crossed the values.
+    let newStart = Math.min(start, end);
+    let newEnd = Math.max(start, end);
+
+    window.shark.media['clip-start'] = newStart;
+    window.shark.media['clip-end'] = newEnd;
+
+    document.querySelector('.video-controls .clip-start').value = formatTimeString(newStart);
+    document.querySelector('.video-controls .clip-end').value = formatTimeString(newEnd);
+
+    _updateClipHighlight()
+}
+
+// Use the clip start and end to compute and update the size of the clip highlight.
+function _updateClipHighlight() {
+    if (!_has_duration) {
+        return;
+    }
+
+    let duration = _get_duration();
+    if (duration <= 0) {
+        return;
+    }
+
+    let start = window.shark.media['clip-start'] ?? 0;
+    let end = window.shark.media['clip-end'] ?? _get_duration();
+
+    let startPercent = 100.0 * (start / duration);
+    let widthPercent = 100.0 * ((end - start) / duration);
+
+    let highlight = document.querySelector('.video-controls-progress .clip-highlight');
+    highlight.style.left = `${startPercent.toFixed(2)}%`;
+    highlight.style.width = `${widthPercent.toFixed(2)}%`;
 }
 
 // Convert a time string (hh:mm:ss.ss) to just the total number of seconds.
@@ -191,22 +254,42 @@ function validateTimeString(text) {
 }
 
 // The reverse of validateTimeString().
-function formatTimeString(totalSecs) {
-    let parts = ['00', '00', '00.00'];
+function formatTimeString(totalSecs, includeHours = false) {
+    let parts = [];
 
-    let hours = Math.floor(totalSecs / 60 / 60);
-    if (hours > 0) {
+    if (includeHours) {
+        let hours = Math.floor(totalSecs / 60 / 60);
         totalSecs -= (hours * 60.0 * 60.0);
-        parts[0] = String(hours).padStart('0', 2);
+        parts.push(String(hours).padStart(2, '0'));
     }
 
     let mins = Math.floor(totalSecs / 60);
-    if (mins > 0) {
-        totalSecs -= (mins * 60.0);
-        parts[1] = String(mins).padStart('0', 2);
-    }
+    totalSecs -= (mins * 60.0);
+    parts.push(String(mins).padStart(2, '0'));
 
-    parts[2] = (totalSecs).toFixed(2).padStart('0', 5);
+    parts.push((totalSecs).toFixed(2).padStart(5, '0'));
 
     return parts.join(':');
+}
+
+// Return a video time (seconds) bound by the duration of the video.
+function _bound_video_time(secs) {
+    let maxTime = Infinity;
+    if (_has_duration()) {
+        maxTime = _get_duration();
+    }
+
+    return Math.max(0.0, Math.min(maxTime, secs));
+}
+
+function _get_duration() {
+    return window.shark.media['duration'];
+}
+
+function _has_duration() {
+    return !isNaN(window.shark.media['duration']);
+}
+
+function _set_duration(value) {
+    window.shark.media['duration'] = value;
 }
