@@ -2,6 +2,18 @@
 
 Shark Clipper is a tool to take screenshots from a video while maintaining the metadata and timing information in the video.
 
+ - [Requirements](#requirements)
+ - [Installation / Setup](#installation---setup)
+   - [Using a Prebuilt Binary](#using-a-prebuilt-binary)
+     - [Using the Linux Prebuilt Binary](#using-the-linux-prebuilt-binary)
+     - [Using the Mac Prebuilt Binary](#using-the-mac-prebuilt-binary)
+     - [Using the Windows Prebuilt Binary](#using-the-windows-prebuilt-binary)
+   - [From Source](#from-source)
+ - [Usage](#usage)
+   - [Video Controls](#video-controls)
+   - [Keyboard Shortcuts](#keyboard-shortcuts)
+ - [Notes](#notes)
+
 ## Requirements
 
 To run Shark Clipper you need:
@@ -144,16 +156,67 @@ In the webpage, you can select a video to work on.
 Once a video is selected, it will need to be encoded so it can be used in a web browser.
 This can take several minutes for large videos.
 
-Once the video is ready, it will show on the screen and you can start taking screenshots.
+Once the video is ready, it will show on the screen and you can start taking screenshots and setting your clip boundaries.
+
+A video's "clip" is a special portion of the video that is put in the output directory with the "clip" suffix
+(the full original video is also written).
+The clip's duration is shows by the highlighted section of the video's progress bar.
+By default, the entire video is set as the clip.
+You can use the video control's to set the clip's boundaries,
+see the [Video Controls](#video-controls) section.
+
 You can take screenshots without the selection box (which will take a screenshot of the entire video screen),
 or you can use the selection box and only take a picture of a section of the screen.
-
 Once a screenshot is taken, you can see it and information about it below.
 You can edit some attributes of the screenshot before saving.
 
 Once you are happy with your screenshots and data, you can save your work.
 This will write the encoded video, screenshots, and all metadata to your "output" directory
 (which defaults to a directory called "out" in the same place you started the server).
+
+### Video Controls
+
+You can control the video player using the controls below the video.
+
+The progress bar (directly below the video) shows where in the video your are currently looking.
+You may click on the progress bar or slide the thump to seek to where you wish in the video.
+The highlighted portion of the progress bar shows the current clip selection.
+
+Below the progress bar is the clip boundary buttons as well as the numerical timing information.
+From left to right, the elements are:
+ - "Clip Start" Button -- Clicking this button sets the start boundary of the clip to the current time.
+ - Clip Start Time -- This field shows the time (MM:SS.ss) of the clip's start boundary.
+   You can manually edit this field (any bad input is discarded).
+ - Current Time -- This field shows the current position (MM:SS.ss) in the video.
+   You can manually edit this field (any bad input is discarded).
+ - Clip End Time -- This field shows the time (MM:SS.ss) of the clip's end boundary.
+   You can manually edit this field (any bad input is discarded).
+ - "Clip End" Button -- Clicking this button sets the end boundary of the clip to the current time.
+
+The next section are video control buttons.
+From left to right, the buttons are:
+ - `<<` -- Seek backwards a large amount.
+ - `<` -- Seek backwards a small amount.
+ - `⏵` / `⏸` -- Toggle play/pause.
+ - `>` -- Seek forwards a small amount.
+ - `>>` -- Seek forwards a large amount.
+
+### Keyboard Shortcuts
+
+| Key             | Action |
+|-----------------|--------|
+| `b`             | Toggle the selection box. |
+| `f`             | Take a screenshot of the video at the current frame. |
+| `s`             | Save the video and all screenshots to the output directory. |
+| `spacebar`      | Toggle play/pause. |
+| `←`             | Seek backwards a large amount. |
+| `→`             | Seek forwards a large amount. |
+| `shift` + `←`   | Seek backwards a small amount. |
+| `shift` + `→`   | Seek forwards a small amount. |
+| `control` + `←` | Seek backwards a very small amount. |
+| `control` + `→` | Seek forwards a very small amount. |
+| `home`          | Seek to the beginning. |
+| `end`           | Seek to the end. |
 
 ## Notes
 
