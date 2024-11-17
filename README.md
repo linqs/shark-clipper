@@ -3,7 +3,7 @@
 Shark Clipper is a tool to take screenshots from a video while maintaining the metadata and timing information in the video.
 
  - [Requirements](#requirements)
- - [Installation / Setup](#installation---setup)
+ - [Installation / Setup](#installation--setup)
    - [Using a Prebuilt Binary](#using-a-prebuilt-binary)
      - [Using the Linux Prebuilt Binary](#using-the-linux-prebuilt-binary)
      - [Using the Mac Prebuilt Binary](#using-the-mac-prebuilt-binary)
