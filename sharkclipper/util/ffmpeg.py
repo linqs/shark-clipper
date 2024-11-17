@@ -172,7 +172,7 @@ def _transcode_with_metadata(in_path, out_path, metadata):
     _run(args, 'ffmpeg')
 
 # Copy a file with new metadata,
-def copy_with_metadata(in_path, out_path, metadata):
+def copy_with_metadata(in_path, out_path, metadata, start_secs = None, end_secs = None, **kwargs):
     args = [
         _get_path('ffmpeg'),
         # Input file.
@@ -192,6 +192,22 @@ def copy_with_metadata(in_path, out_path, metadata):
         # Output file.
         out_path,
     ]
+
+    # Put in the optional end time (in seconds) before '-i'.
+    if (end_secs is not None):
+        clip_start = 0.0
+        if (start_secs is not None):
+            clip_start = start_secs
+
+        clip_length = end_secs - clip_start
+
+        args.insert(1, '-t')
+        args.insert(2, "%0.2f" % (clip_length))
+
+    # Put in the optional start time (in seconds) before '-i'.
+    if (start_secs is not None):
+        args.insert(1, '-ss')
+        args.insert(2, "%0.2f" % (start_secs))
 
     _run(args, 'ffmpeg')
 

@@ -66,6 +66,7 @@ function save() {
         method: 'POST',
         body: JSON.stringify({
             'video': window.shark.info['video'],
+            'clip': window.shark.media.clip,
             'screenshots': window.shark.screenshots,
             'key_metadata': window.shark.info['key_metadata'],
             'all_metadata': window.shark.info['all_metadata'],

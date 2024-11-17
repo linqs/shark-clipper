@@ -1,7 +1,11 @@
 'use strict';
 
-window.shark = window.shark || {};
-window.shark.media = window.shark.media || {};
+window.shark = window.shark ?? {};
+window.shark.media = window.shark.media ?? {};
+
+// TODO - Make seek durations constants: short seek, long seek.
+
+// TODO - Keyboard shortcuts: left, right, shift+left, shift+right, home, end.
 
 // Initialize the video controls and block until the video is ready.
 function initVideoControls() {
@@ -47,7 +51,6 @@ function metadataLoaded() {
     }
 
     _set_duration(duration);
-    setClipAbsolute(duration, false);
 
     // Set initial values for times.
     setCurrentTime(0);
@@ -161,8 +164,9 @@ function setClipAbsolute(value, isStart) {
         return;
     }
 
-    let start = window.shark.media['clip-start'] ?? 0;
-    let end = window.shark.media['clip-end'] ?? _get_duration();
+    let clipInfo = window.shark.media.clip ?? {};
+    let start = clipInfo.start ?? 0;
+    let end = clipInfo.end ?? _get_duration();
 
     if (isStart) {
         start = value;
@@ -174,8 +178,10 @@ function setClipAbsolute(value, isStart) {
     let newStart = Math.min(start, end);
     let newEnd = Math.max(start, end);
 
-    window.shark.media['clip-start'] = newStart;
-    window.shark.media['clip-end'] = newEnd;
+    window.shark.media.clip = {
+        start: newStart,
+        end: newEnd,
+    };
 
     document.querySelector('.video-controls .clip-start').value = formatTimeString(newStart);
     document.querySelector('.video-controls .clip-end').value = formatTimeString(newEnd);
@@ -194,8 +200,10 @@ function _updateClipHighlight() {
         return;
     }
 
-    let start = window.shark.media['clip-start'] ?? 0;
-    let end = window.shark.media['clip-end'] ?? _get_duration();
+
+    let clipInfo = window.shark.media.clip ?? {};
+    let start = clipInfo.start ?? 0;
+    let end = clipInfo.end ?? _get_duration();
 
     let startPercent = 100.0 * (start / duration);
     let widthPercent = 100.0 * ((end - start) / duration);
@@ -281,13 +289,14 @@ function _bound_video_time(secs) {
 }
 
 function _get_duration() {
-    return window.shark.media['duration'];
+    return window.shark.media.duration;
 }
 
 function _has_duration() {
-    return !isNaN(window.shark.media['duration']);
+    let duration = window.shark.media.duration;
+    return (duration !== undefined) && !isNaN(duration);
 }
 
 function _set_duration(value) {
-    window.shark.media['duration'] = value;
+    window.shark.media.duration = value;
 }

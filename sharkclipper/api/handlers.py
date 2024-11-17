@@ -17,6 +17,7 @@ import sharkclipper.util.version
 STATIC_DIR = os.path.join(sharkclipper.util.file.get_root_dir(), 'static')
 
 METADATA_FILENAME_SUFFIX = '_metadata.json'
+CLIP_FILENAME_SUFFIX = '_clip.mp4'
 
 EXIF_DATETIME_FORMAT = '%Y:%m:%d %H:%M:%S'
 
@@ -116,21 +117,32 @@ def save(handler, path, temp_dir = None, data = None, out_dir = None, **kwargs):
         exif = _set_exif_data(image, metadata, now)
         image.save(path, exif = exif)
 
-    # Save web-encoded video with new metadata.
+    # Save a web-encoded copy of the original video with the new metadata.
     video_metadata = data['video'].copy()
     video_metadata['screenshots'] = [metadata['image'] for metadata in screenshots_metadata]
     old_path = os.path.join(temp_dir, 'webencode', data['video']['id'] + '.mp4')
     new_path = os.path.join(out_dir, data['video']['name'] + '.mp4')
     sharkclipper.util.ffmpeg.copy_with_metadata(old_path, new_path, video_metadata)
 
-    # Save all metadata.
+    # Save an additional copy of the video that is only the clipped portion.
+    clip_info = data.get('clip', {})
+    if ((clip_info is not None) and (clip_info != {})):
+        video_metadata['clip'] = clip_info,
+        old_path = os.path.join(temp_dir, 'webencode', data['video']['id'] + '.mp4')
+        new_path = os.path.join(out_dir, data['video']['name'] + CLIP_FILENAME_SUFFIX)
+        sharkclipper.util.ffmpeg.copy_with_metadata(old_path, new_path, video_metadata,
+                start_secs = clip_info.get('start', None), end_secs = clip_info.get('end', None))
+
+    # Save all the metadata in a single file.
     metadata = {
         'saved_at_unix': int(now.timestamp()),
         'video': data['video'],
+        'clip': clip_info,
         'screenshots': screenshots_metadata,
         'key': data.get('key_metadata', {}),
         'all': data.get('all_metadata', {}),
     }
+
     metadata_path = os.path.join(out_dir, data['video']['name'] + METADATA_FILENAME_SUFFIX)
     with open(metadata_path, 'w') as file:
         json.dump(metadata, file, indent = 4)
