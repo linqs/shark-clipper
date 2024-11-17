@@ -43,7 +43,7 @@ jobs:
     strategy:
       matrix:
         python-version: ['3.11']
-        os: ['ubuntu-22.04', 'macos-14', 'windows-2022']
+        os: ['ubuntu-22.04', 'macos-13', 'macos-14', 'windows-2022']
 
     runs-on: ${{ matrix.os }}
 
