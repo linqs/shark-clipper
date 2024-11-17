@@ -28,11 +28,11 @@ function createVideoAreaHTML(videoInfo, path, type, latitude_input_value, longit
                     <button class='clip-end-now' onclick='setClipNow(false)'>Clip End</button>
                 </div>
                 <div class='video-controls-row video-controls-seek'>
-                    <button class='skip-far-back' onclick='videoSeekOffset(-5.0)'>↺</button>
-                    <button class='skip-back' onclick='videoSeekOffset(-0.5)'>↶</button>
+                    <button class='skip-far-back' onclick='videoSeekOffset(-5.0)'>\<\<</button>
+                    <button class='skip-back' onclick='videoSeekOffset(-0.5)'>\<</button>
                     <button class='play-pause' onclick='videoTogglePlay()'>⏵</button>
-                    <button class='skip-far-back' onclick='videoSeekOffset(0.5)'>↷</button>
-                    <button class='skip-far-back' onclick='videoSeekOffset(5.0)'>↻</button>
+                    <button class='skip-far-back' onclick='videoSeekOffset(0.5)'>\></button>
+                    <button class='skip-far-back' onclick='videoSeekOffset(5.0)'>\>\></button>
                 </div>
             </div>
         </div>

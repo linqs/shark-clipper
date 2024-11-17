@@ -207,8 +207,10 @@ img.spinner {
 
 .video-controls-row input,
 .video-controls-row button {
-    border-radius: 10px;
     height: 90%;
+    width: 20%;
+    border-radius: 10px;
+    font-size: 1.15vw;
 }
 
 .video-controls-row input,
@@ -256,12 +258,9 @@ img.spinner {
 
 .video-controls-clip input,
 .video-controls-clip button {
-    width: 20%;
 }
 
 .video-controls-seek button {
-    font-size: 30px;
-    width: 20%;
 }
 
 .metadata-area {

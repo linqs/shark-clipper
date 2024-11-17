@@ -3,8 +3,6 @@
 window.shark = window.shark || {};
 window.shark.media = window.shark.media || {};
 
-// TODO - Relative font size for icons and inputs.
-
 // Initialize the video controls and block until the video is ready.
 function initVideoControls() {
     let video = document.querySelector('.main-video');
