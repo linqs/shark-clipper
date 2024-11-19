@@ -61,12 +61,23 @@ button {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    text-align: center;
-    gap: 0.5em;
+    align-items: center;
 }
 
 .file-upload-screen input {
+    display: none;
+}
+
+.file-upload-screen label {
+    display: inline-block;
+    cursor: pointer;
+
+    background-color: white;
     text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    border: #333 solid 1px;
+    box-shadow: #333 2px 2px 2px;
 }
 
 .loading-screen {
