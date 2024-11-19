@@ -13,7 +13,8 @@ function createVideoAreaHTML(videoInfo, path, type, latitude_input_value, longit
             <div class='video-controls'>
                 <div class='video-controls-row video-controls-progress'>
                     <input type='range'
-                            class='progress-bar'
+                            class='progress-bar' name='progress-bar'
+                            autocomplete='off'
                             value='0.0' min='0.0' max='1.0' step='0.01'
                             onchange='videoSeekProportional(this)' />
                     <div class='clip-highlight-container'>
@@ -22,9 +23,21 @@ function createVideoAreaHTML(videoInfo, path, type, latitude_input_value, longit
                 </div>
                 <div class='video-controls-row video-controls-clip'>
                     <button class='clip-start-now' onclick='setClipNow(true)'>Clip Start</button>
-                    <input type='text' class='clip-start' onchange='setClipAbsolute(this, true)' value='-' />
-                    <input type='text' class='current-time' onchange='videoSeek(this)' value='-' />
-                    <input type='text' class='clip-end' onchange='setClipAbsolute(this, false)' value='-' />
+                    <input type='text'
+                            class='clip-start' name='clip-start'
+                            autocomplete='off'
+                            onchange='setClipAbsolute(this, true)'
+                            value='-' />
+                    <input type='text'
+                            class='current-time' name='current-time'
+                            autocomplete='off'
+                            onchange='videoSeek(this)'
+                            value='-' />
+                    <input type='text'
+                            class='clip-end' name='clip-end'
+                            autocomplete='off'
+                            onchange='setClipAbsolute(this, false)'
+                            value='-' />
                     <button class='clip-end-now' onclick='setClipNow(false)'>Clip End</button>
                 </div>
                 <div class='video-controls-row video-controls-seek'>
@@ -38,29 +51,37 @@ function createVideoAreaHTML(videoInfo, path, type, latitude_input_value, longit
         </div>
         <div class='metadata-area'>
             <div>
-                <label for='name'>Name:</label>
-                <input type='text' name='name'
+                <label for='video-metadata-name'>Name:</label>
+                <input type='text'
+                        id='video-metadata-name' name='name'
+                        autocomplete='off'
                         data-video-id='${videoInfo.id}'
                         onchange='editVideo(this, "name")'
                         value='${videoInfo.name}' />
             </div>
             <div>
-                <label for='name'>Video Start Time:</label>
-                <input type='datetime-local' name='start_time'
+                <label for='video-metadata-start_time'>Video Start Time:</label>
+                <input type='datetime-local'
+                        id='video-metadata-start_time' name='start_time'
+                        autocomplete='off'
                         data-video-id='${videoInfo.id}'
                         onchange='editVideo(this, "start_time")'
                         value='${start_time_input_value}' />
             </div>
             <div>
-                <label for='latitude'>Latitude:</label>
-                <input type='number' name='latitude' step='0.01'
+                <label for='video-metadata-latitude'>Latitude:</label>
+                <input type='number'
+                        id='video-metadata-latitude' name='latitude' step='0.01'
+                        autocomplete='off'
                         data-video-id='${videoInfo.id}'
                         onchange='editVideo(this, "latitude")'
                         value='${latitude_input_value}' />
             </div>
             <div>
-                <label for='longitude'>Longitude:</label>
-                <input type='number' name='longitude' step='0.01'
+                <label for='video-metadata-longitude'>Longitude:</label>
+                <input type='number'
+                        id='video-metadata-longitude' name='longitude' step='0.01'
+                        autocomplete='off'
                         data-video-id='${videoInfo.id}'
                         onchange='editVideo(this, "longitude")'
                         value='${longitude_input_value}' />
@@ -70,7 +91,7 @@ function createVideoAreaHTML(videoInfo, path, type, latitude_input_value, longit
 }
 
 function createScreenshotHTML(screenshot) {
-    let time_input_value = convertUnixSecsForInput(screenshot.time);
+    let timeInputValue = convertUnixSecsForInput(screenshot.time);
 
     return `
         <div class='screenshot media-metadata-container' data-id='${screenshot.id}'>
@@ -79,15 +100,20 @@ function createScreenshotHTML(screenshot) {
             </div>
             <div class='metadata-area'>
                 <div>
-                    <label for='name'>Name:</label>
-                    <input type='text' name='name'
+                    <label for='screenshot-metadata-${screenshot.id}-name'>Name:</label>
+                    <input type='text'
+                            id='screenshot-metadata-${screenshot.id}-name' name='name'
+                            autocomplete='off'
                             onchange='editScreenshot(this, "${screenshot.id}", "name")'
                             value='${screenshot.name}' />
                 </div>
                 <div>
-                    <label for='time'>Time:</label>
-                    <input type='datetime-local' name='time' readonly='true' disabled
-                            value='${time_input_value}' />
+                    <label for='screenshot-metadata-${screenshot.id}-time'>Time:</label>
+                    <input type='datetime-local'
+                            id='screenshot-metadata-${screenshot.id}-time' name='time'
+                            autocomplete='off'
+                            readonly='true' disabled
+                            value='${timeInputValue}' />
                 </div>
                 <div>
                     <span>
