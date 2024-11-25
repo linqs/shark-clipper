@@ -160,7 +160,7 @@ Once the video is ready, it will show on the screen and you can start taking scr
 
 A video's "clip" is a special portion of the video that is put in the output directory with the "clip" suffix
 (the full original video is also written).
-The clip's duration is shows by the highlighted section of the video's progress bar.
+The clip's duration is shown by the highlighted section of the video's progress bar.
 By default, the entire video is set as the clip.
 You can use the video control's to set the clip's boundaries,
 see the [Video Controls](#video-controls) section.
